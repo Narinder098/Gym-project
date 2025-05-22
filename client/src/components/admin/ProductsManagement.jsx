@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import EditProductModal from './handleEditProduct';
 
 const ProductsManagement = () => {
   const [products, setProducts] = useState([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+const [selectedProduct, setSelectedProduct] = useState(null);
+
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -43,6 +47,31 @@ const ProductsManagement = () => {
       console.error(err);
     }
   };
+
+  // const handleEditProduct = async (id) => {
+  //   const productToEdit = products.find(product => product._id === id);
+  //   if (!productToEdit) {
+  //     toast.error('Product not found');
+  //     return;
+  //   }
+  //   const updatedProduct = {
+  //     ...productToEdit,
+  //     name: prompt('Enter new product name:', productToEdit.name) || productToEdit.name,
+  //     price: prompt('Enter new product price:', productToEdit.price) || productToEdit.price,
+  //     category: prompt('Enter new product category:', productToEdit.category) || productToEdit.category,
+  //     stock: prompt('Enter new product stock:', productToEdit.stock) || productToEdit.stock,
+  //     image: prompt('Enter new product image URL:', productToEdit.image) || productToEdit.image,
+  //     description: prompt('Enter new product description:', productToEdit.description) || productToEdit.description
+  //   };
+  //   try {
+  //     await axios.post(`http://localhost:8000/product/updateProduct/${id}`, updatedProduct);
+  //     toast.success('Product updated successfully');
+  //     setProducts(products.map(product => (product._id === id ? updatedProduct : product)));
+  //   } catch (err) {
+  //     toast.error('Failed to update product');
+  //     console.error(err);
+  //   }
+  // };
 
   const handleDeleteProduct = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
@@ -93,7 +122,7 @@ const ProductsManagement = () => {
                 <button onClick={() => handleDeleteProduct(product._id)} className="text-red-500 hover:text-red-600">
                   <FaTrash />
                 </button>
-                <button className="text-blue-500 hover:text-blue-600">
+                <button onClick={() => handleEditProduct(product._id)} className="text-blue-500 hover:text-blue-600">
                   <FaEdit />
                 </button>
               </div>

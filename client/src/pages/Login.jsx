@@ -5,12 +5,14 @@ import { useAuth } from "../context/AuthContext";
 import { FaDumbbell, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Toaster, toast } from "sonner";
 import axios from "axios";
+import { useEffect } from "react";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const { user, login } = useAuth();
   const navigate = useNavigate();
+  const { restoreUser } = useAuth();
 
   const {
     register,
@@ -36,10 +38,8 @@ const Login = () => {
 
       toast.success(`${isLogin ? "Login" : "Signup"} successful!`);
       reset();
-      const loggedInUser = response.data.user;
 
-      console.log(loggedInUser);
-      console.log(user);
+      const loggedInUser = response.data.user;
 
       if (loggedInUser.email === "admin@gmail.com") {
         navigate("/admin");
@@ -61,6 +61,7 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">

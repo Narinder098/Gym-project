@@ -102,45 +102,52 @@ export const getProductById = async (req, res) => {
 }
 
 export const updateProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const { name, price, stock, description, image, category } = req.body;
 
-        if (!name && !price && !stock && !description && !image && !category) {
-            return res.status(400).json({
-                message: "At least one field must be provided for update",
-                error: true,
-                success: false
-            });
-        }
+    const updatedFields = {};
+    if (name) updatedFields.name = name;
+    if (price) updatedFields.price = price;
+    if (stock) updatedFields.stock = stock;
+    if (description) updatedFields.description = description;
+    if (image) updatedFields.image = image;
+    if (category) updatedFields.category = category;
 
-        const updatedProduct = await ProductModel.findByIdAndUpdate(
-            id,
-            { name, price, stock, description, image, category },
-            { new: true }
-        );
-
-        if (!updatedProduct) {
-            return res.status(404).json({
-                message: "Product not found",
-                error: true,
-                success: false
-            });
-        }
-
-        return res.status(200).json({
-            message: "Product updated successfully",
-            error: false,
-            success: true,
-            product: updatedProduct
-        });
-    } catch (error) {
-        return res.status(404).json({
-            message: error.message,
-            error: true,
-            success: false
-        })
+    if (Object.keys(updatedFields).length === 0) {
+      return res.status(400).json({
+        message: "No fields provided for update",
+        error: true,
+        success: false,
+      });
     }
-}
+
+    const updatedProduct = await ProductModel.findByIdAndUpdate(id, updatedFields, {
+      new: true,
+    });
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        message: "Product not found",
+        error: true,
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Product updated successfully",
+      error: false,
+      success: true,
+      product: updatedProduct,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      error: true,
+      success: false,
+    });
+  }
+};
 
 export const deleteProduct = async (req, res) => {
     try {

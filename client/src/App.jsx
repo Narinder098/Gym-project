@@ -16,6 +16,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import NotFound from './pages/NotFound'
 import { useAuth } from './context/AuthContext';
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 function App() {
   const { isAdmin } = useAuth();

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   const login = async ({ token, user }) => {
     try {
       setUser(user);
-      localStorage.setItem("token", token);
+      // localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       toast.success("Login successful!");
     } catch (error) {
@@ -23,50 +23,36 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.post("http://localhost:8000/auth/logout", {}, { withCredentials: true });
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      toast.success("Logout successful");
       setUser(null);
-    } catch (error) {
+      localStorage.removeItem("key");
+      toast.success("Logged out");
+    }
+    catch (error) {
       console.error("Logout failed", error);
+      toast.error("Logout failed");
+    }
+  };
+  const restoreUser = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/auth/getUser", {}, {
+        withCredentials: true
+      });
+      if (response.data && response.data.user) {
+        setUser(response.data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const restoreUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setLoading(false);  // No token, stop loading
-        return;
-      }
+ useEffect(() => {
+  restoreUser();
+}, []);
 
-      try {
-        const res = await axios.post(
-          "http://localhost:8000/auth/getUser",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            withCredentials: true,
-          }
-        );
-
-        if (res.data && res.data.user) {
-          setUser(res.data.user);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
-        }
-      } catch (error) {
-        console.error("Failed to restore session:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      } finally {
-        setLoading(false); // Done loading regardless of outcome
-      }
-    };
-
-    restoreUser();
-  }, []);
 
   const isAdmin = () => {
     return user?.role === "admin";
@@ -78,6 +64,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     isAdmin,
     loading,
+    restoreUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

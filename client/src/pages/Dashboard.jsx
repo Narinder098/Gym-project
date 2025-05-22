@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import WorkoutPlanner from './WorkoutPlanner';
 import Progress from './Progress';
-
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -14,13 +14,13 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   // const { token } = useAuth();
-
-  console.log(user);
+  // console.log(user);
   if (!user) return <div className="text-center py-10">Loading...</div>;
-  const handleLogout = async () => {
+  const handleDelete = async () => {
     try {
       await logout();
       navigate("/");
+      toast.success("Account delete successfully")
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -281,11 +281,7 @@ const Dashboard = () => {
         </div>
 
         <button
-          onClick={() => {
-            // TODO: Add API call to delete account
-            logout();
-            window.location.href = '/login';
-          }}
+          onClick={(handleDelete)}
           className="mt-6 w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300"
         >
           Delete Account
