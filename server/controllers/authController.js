@@ -76,20 +76,6 @@ export const signUpController = async (req, res) => {
   }
 };
 
-export const getUser = async (req, res) => {
-  try {
-    const token = req.cookies.sessionToken;
-    
-    if (!token) return res.status(201).json({ message: "Unauthorized , please login" });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await UserModel.findById(decoded._id).select("-password");
-    res.status(200).json({ success: true, user });
-  } catch (error) {
-    res.status(401).json({ message: "Invalid or expired token" });
-  }
-};
-
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -169,8 +155,10 @@ export const loginController = async (req, res) => {
 
     res.cookie("sessionToken", token, {
       httpOnly: true,
-      secure: false, // true in production with HTTPS
-      sameSite: "Lax", // "None" for cross-origin
+      // secure: false, // true in production with HTTPS
+      secure: process.env.NODE_ENV === 'production',
+      // sameSite: "Lax", // "None" for cross-origin
+      sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -189,9 +177,21 @@ export const loginController = async (req, res) => {
   }
 };
 
+export const getUser = async (req, res) => {
+  try {
+    const token = req.cookies.sessionToken;
+    if (!token) return res.status(401).json({ message: "Unauthorized, please login", success: false });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await UserModel.findById(decoded._id).select("-password");
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(401).json({ message: "Invalid or expired token", success: false });
+  }
+};
+
 export const logout = async (req, res) => {
   try {
-    // Optional: Invalidate user token in DB
     const { sessionToken } = req.cookies;
 
     if (sessionToken) {
@@ -203,23 +203,20 @@ export const logout = async (req, res) => {
           await user.save();
         }
       } catch (err) {
-        // Token might be expired or invalid, log it but don't fail logout
         console.log("Token invalid or expired:", err.message);
       }
     }
 
-    // Clear the session cookie
     res.clearCookie("sessionToken", {
       httpOnly: true,
-      secure: true,        // ✅ true for production (HTTPS); false for local dev
-      sameSite: "None",    // ✅ use "Lax" for same-origin, "None" for cross-origin
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: "strict",
     });
 
     return res.status(200).json({
       success: true,
       message: "User logged out successfully.",
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,

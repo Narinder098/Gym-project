@@ -26,8 +26,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', router),
-app.use('/product', Productrouter),
-app.use('/orders', cartRoutes);
+app.use('/products', Productrouter),
+app.use('/cart', cartRoutes);
+app.use('/orders', cartRoutes); 
 
 
 

@@ -23,31 +23,26 @@ const Shop = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/product/getAllProduct'); // Adjust the URL as needed
-        console.log(response); // Log the full response for inspection
-        
-        // Handle different response formats
+        const response = await axios.get('http://localhost:8000/products/getAllProduct');
+        console.log('Fetch products response:', response.data); // Debug
         const productsData = response.data.products || response.data;
-        
         if (Array.isArray(productsData)) {
           setProducts(productsData);
         } else {
           setError('Invalid response format');
           console.error('API response is not an array:', response.data);
         }
-        
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch products');
-        console.error('Error fetching products:', err);
+        console.error('Error fetching products:', err.response?.data || err.message);
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
-  // Safely filter products (ensuring products is always an array)
+  // Filter products
   const filteredProducts = Array.isArray(products)
     ? products.filter((product) => {
         const matchesCategory =
@@ -59,13 +54,13 @@ const Shop = () => {
       })
     : [];
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const handleAddToCart = (product) => {
+    console.log('Adding to cart:', product); // Debug
+    addToCart(product);
+  };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -112,7 +107,7 @@ const Shop = () => {
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product, index) => (
             <div
-              key={product.id || index}
+              key={product._id || index}
               className="bg-white rounded-lg shadow-md overflow-hidden transform translate-y-4 opacity-0 hover:-translate-y-2 transition-all duration-300"
               style={{
                 animation: `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`
@@ -126,7 +121,7 @@ const Shop = () => {
                 />
                 <div className="absolute top-2 right-2">
                   <span className="bg-primary text-white px-3 py-1 rounded-full text-sm">
-                    ${product.price}
+                    ${product.price.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -136,7 +131,7 @@ const Shop = () => {
                   {product.description}
                 </p>
                 <button
-                  onClick={() => addToCart(product)}
+                  onClick={() => handleAddToCart(product)}
                   className="w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105"
                 >
                   Add to Cart
@@ -145,7 +140,7 @@ const Shop = () => {
             </div>
           ))
         ) : (
-          <div className="text-center text-gray-600 mt-8">
+          <div className="col-span-full text-center text-gray-600 mt-8">
             No products found matching your criteria.
           </div>
         )}

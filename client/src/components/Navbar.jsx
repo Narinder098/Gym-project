@@ -25,7 +25,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 transition-transform duration-300 hover:scale-105">
-            <FaDumbbell className="text-primary text-2xl" />
+            <FaDumbbell className="text-blue-500 text-2xl" />
             <span className="text-xl font-bold">Fitness Hub</span>
           </Link>
 

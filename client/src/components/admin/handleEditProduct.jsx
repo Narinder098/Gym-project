@@ -50,8 +50,8 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
   return (
     <Dialog open={isOpen} onClose={onClose} className="fixed z-50 inset-0 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen p-4 bg-black/30">
-        <Dialog.Panel className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl space-y-4">
-          <Dialog.Title className="text-lg font-bold">Edit Product</Dialog.Title>
+        <DialogPanel className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl space-y-4">
+          <DialogTitle className="text-lg font-bold">Edit Product</DialogTitle>
 
           {["name", "price", "category", "stock", "image", "description"].map((field) => (
             <input
@@ -68,7 +68,7 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
             <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">Cancel</button>
             <button onClick={handleSubmit} className="px-4 py-2 bg-blue-600 text-white rounded">Update</button>
           </div>
-        </Dialog.Panel>
+        </DialogPanel>
       </div>
     </Dialog>
   );

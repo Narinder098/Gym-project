@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -28,69 +28,53 @@ const WorkoutPlanner = () => {
     }
   ]);
 
-  const [events, setEvents] = useState([
-    {
-      id: '1',
-      title: 'Full Body Workout',
-      date: '2024-03-20',
-      color: '#ff2625'
-    },
-    {
-      id: '2',
-      title: 'Upper Body Focus',
-      date: '2024-03-22',
-      color: '#ff2625'
-    }
-  ]);
-
-  const [newWorkout, setNewWorkout] = useState({
-    title: '',
-    exercises: [],
-    duration: ''
-  });
+  const [events, setEvents] = useState([]);
+  const [newWorkout, setNewWorkout] = useState({ title: '', exercises: '', duration: '' });
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState('');
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-
-    const items = Array.from(workouts);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setWorkouts(items);
+    const updated = [...workouts];
+    const [reorderedItem] = updated.splice(result.source.index, 1);
+    updated.splice(result.destination.index, 0, reorderedItem);
+    setWorkouts(updated);
   };
 
   const handleDateClick = (arg) => {
-    const selectedWorkout = workouts[0];
-    if (selectedWorkout) {
-      const newEvent = {
-        id: Date.now().toString(),
-        title: selectedWorkout.title,
-        date: arg.dateStr,
-        color: '#ff2625'
-      };
-      setEvents([...events, newEvent]);
-      toast.success('Workout scheduled successfully!');
-    }
+    const workout = workouts.find(w => w.id === selectedWorkoutId);
+    if (!workout) return toast.error('Select a workout first!');
+    const newEvent = {
+      id: Date.now().toString(),
+      title: workout.title,
+      date: arg.dateStr,
+      color: '#ff2625'
+    };
+    setEvents(prev => [...prev, newEvent]);
+    toast.success('Workout scheduled!');
   };
 
   const handleAddWorkout = (e) => {
     e.preventDefault();
-    if (newWorkout.title && newWorkout.duration) {
-      setWorkouts([
-        ...workouts,
-        {
-          id: Date.now().toString(),
-          ...newWorkout
-        }
-      ]);
-      setNewWorkout({ title: '', exercises: [], duration: '' });
-      toast.success('New workout added!');
+    if (!newWorkout.title || !newWorkout.duration || !newWorkout.exercises) {
+      return toast.error('Fill all fields');
     }
+
+    const newW = {
+      id: Date.now().toString(),
+      title: newWorkout.title,
+      exercises: newWorkout.exercises.split(',').map(e => e.trim()),
+      duration: newWorkout.duration
+    };
+
+    setWorkouts(prev => [...prev, newW]);
+    setNewWorkout({ title: '', exercises: '', duration: '' });
+    toast.success('Workout added!');
   };
 
   const handleDeleteWorkout = (id) => {
-    setWorkouts(workouts.filter(workout => workout.id !== id));
-    setEvents(events.filter(event => event.title !== workouts.find(w => w.id === id)?.title));
+    const toDelete = workouts.find(w => w.id === id);
+    setWorkouts(prev => prev.filter(w => w.id !== id));
+    setEvents(prev => prev.filter(e => e.title !== toDelete.title));
     toast.success('Workout deleted!');
   };
 
@@ -100,98 +84,116 @@ const WorkoutPlanner = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Workout List */}
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold">Workout Templates</h2>
-              <button
-                onClick={() => document.getElementById('addWorkoutForm').scrollIntoView({ behavior: 'smooth' })}
-                className="bg-primary text-white px-4 py-2 rounded-lg flex items-center"
-              >
-                <FaPlus className="mr-2" /> Add Workout
-              </button>
-            </div>
-
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="workouts">
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="space-y-4"
-                  >
-                    {workouts.map((workout, index) => (
-                      <Draggable
-                        key={workout.id}
-                        draggableId={workout.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="bg-gray-50 p-4 rounded-lg"
-                          >
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h3 className="font-semibold">{workout.title}</h3>
-                                <p className="text-gray-600 text-sm">{workout.duration}</p>
-                                <ul className="mt-2 space-y-1">
-                                  {workout.exercises.map((exercise, i) => (
-                                    <li key={i} className="text-sm flex items-center">
-                                      <FaDumbbell className="text-primary mr-2" />
-                                      {exercise}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                              <button
-                                onClick={() => handleDeleteWorkout(workout.id)}
-                                className="text-red-500 hover:text-red-600"
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-
-            <form id="addWorkoutForm" onSubmit={handleAddWorkout} className="mt-8 space-y-4">
-              <h3 className="font-semibold">Add New Workout</h3>
-              <input
-                type="text"
-                placeholder="Workout Title"
-                value={newWorkout.title}
-                onChange={(e) => setNewWorkout({ ...newWorkout, title: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg"
-              />
-              <input
-                type="text"
-                placeholder="Duration (e.g., 45 min)"
-                value={newWorkout.duration}
-                onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg"
-              />
-              <button
-                type="submit"
-                className="w-full bg-primary text-white py-2 rounded-lg hover:bg-red-600 transition-colors"
-              >
-                Add Workout
-              </button>
-            </form>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Workouts</h2>
+            <button
+              onClick={() => document.getElementById('addWorkoutForm').scrollIntoView({ behavior: 'smooth' })}
+              className="bg-primary text-white px-4 py-2 rounded-lg flex items-center"
+            >
+              <FaPlus className="mr-2" /> Add
+            </button>
           </div>
+
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="workouts">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-4">
+                  {workouts.map((workout, index) => (
+                    <Draggable key={workout.id} draggableId={workout.id} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="bg-gray-50 p-4 rounded-lg"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-semibold">{workout.title}</h3>
+                              <p className="text-sm text-gray-500">{workout.duration}</p>
+                              <ul className="mt-2 space-y-1 text-sm text-gray-700">
+                                {workout.exercises.map((exercise, i) => (
+                                  <li key={i} className="flex items-center">
+                                    <FaDumbbell className="text-primary mr-2" />
+                                    {exercise}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            <button
+                              onClick={() => handleDeleteWorkout(workout.id)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+
+          {/* Add Workout Form */}
+          <form
+            id="addWorkoutForm"
+            onSubmit={handleAddWorkout}
+            className="mt-6 space-y-3 border-t pt-4"
+          >
+            <h3 className="font-semibold">Add New Workout</h3>
+            <input
+              type="text"
+              placeholder="Workout Title"
+              value={newWorkout.title}
+              onChange={(e) => setNewWorkout({ ...newWorkout, title: e.target.value })}
+              className="w-full px-4 py-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Exercises (comma separated)"
+              value={newWorkout.exercises}
+              onChange={(e) => setNewWorkout({ ...newWorkout, exercises: e.target.value })}
+              className="w-full px-4 py-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Duration (e.g., 45 min)"
+              value={newWorkout.duration}
+              onChange={(e) => setNewWorkout({ ...newWorkout, duration: e.target.value })}
+              className="w-full px-4 py-2 border rounded"
+            />
+            <button
+              type="submit"
+              className="w-full bg-primary text-white py-2 rounded hover:bg-red-600 transition"
+            >
+              Add Workout
+            </button>
+          </form>
         </div>
 
         {/* Calendar */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="mb-4">
+              <label className="block mb-2 font-medium">Select Workout to Schedule</label>
+              <select
+                className="w-full border px-4 py-2 rounded"
+                value={selectedWorkoutId}
+                onChange={(e) => setSelectedWorkoutId(e.target.value)}
+              >
+                <option value="">-- Select Workout --</option>
+                {workouts.map(workout => (
+                  <option key={workout.id} value={workout.id}>
+                    {workout.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <FullCalendar
               plugins={[dayGridPlugin, interactionPlugin]}
               initialView="dayGridMonth"
@@ -203,9 +205,7 @@ const WorkoutPlanner = () => {
                 right: 'dayGridMonth'
               }}
               height="auto"
-              editable={true}
               selectable={true}
-              eventColor="#ff2625"
             />
           </div>
         </div>

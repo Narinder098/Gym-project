@@ -26,7 +26,7 @@ const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/product/getAllProduct');
+      const res = await axios.get('http://localhost:8000/products/getAllProduct');
       console.log("Fetched products:", res.data);
       setProducts(res.data.products || []);
     } catch (err) {

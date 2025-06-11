@@ -6,6 +6,7 @@ import { FaDumbbell, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Toaster, toast } from "sonner";
 import axios from "axios";
 import { useEffect } from "react";
+import { useCart } from "../context/CartContext";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,6 +14,7 @@ const Login = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const { restoreUser } = useAuth();
+  const { setAuthenticated } = useCart();
 
   const {
     register,
@@ -31,6 +33,7 @@ const Login = () => {
       const response = await axios.post(`http://localhost:8000/auth/${endpoint}`, payload, {
         withCredentials: true,
       });
+      setAuthenticated(true); // Set authenticated state in CartContext
 
       const { token } = response.data;
 

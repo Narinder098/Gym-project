@@ -1,20 +1,18 @@
 import express from 'express';
-import { getCart, addToCart,removeFromCart,clearCart, placeOrder, getUserOrders, getAllOrders, order,} from '../controllers/cartController.js';
-import auth from '../middlewares/auth.js';
-// import { isAdmin } from "../middlewares/authMiddleware.js";
+import { getCart, addToCart, removeFromCart, clearCart, placeOrder, getUserOrders, getAllOrders } from '../controllers/cartController.js';
+import auth, { isAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-router.get('/', getCart);
-router.post('/add', addToCart);
-router.post('/remove', removeFromCart);
-router.post('/clear', clearCart);
+// Cart routes
+router.get('/', getCart); // Get user's cart
+router.post('/add',auth, addToCart); // Add item to cart
+router.post('/remove', removeFromCart); // Remove item from cart
+router.post('/clear', clearCart); // Clear cart
 
-router.post("/cart/add", addToCart);
-router.post("/", order)
-router.post("/place", placeOrder);
-router.get("/user", getUserOrders);
-router.get("/admin", getAllOrders);
-
+// Order routes
+router.post('/place', auth, placeOrder); // Place order
+router.get('/user', auth, getUserOrders); // Get user's orders
+router.get('/admin', auth, isAdmin, getAllOrders); // Get all orders (admin)
 
 export default router;

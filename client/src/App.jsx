@@ -16,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import NotFound from './pages/NotFound'
 import { useAuth } from './context/AuthContext';
+import WorkoutSession from './pages/WorkoutSession';
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/exercises" element={<ExercisesPage />} />
           <Route path="/exercise/:id" element={<ExerciseDetail />} />
+          <Route path="/workout/:id" element={<WorkoutSession />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/cart" element={<Cart />} />
