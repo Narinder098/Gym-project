@@ -98,7 +98,7 @@ const UserManagement = () => {
       setLoading(true);
       setError(null);
       console.log("Fetching users from /auth/users");
-      const res = await axios.get("http://localhost:8000/auth/users", {
+      const res = await axios.get("https://gym-project-server.onrender.com/auth/users", {
         withCredentials: true,
       });
       console.log("Response:", res.data);
@@ -146,7 +146,7 @@ const UserManagement = () => {
         return;
       }
       const response = await axios.patch(
-        `http://localhost:8000/auth/updateMembership/${userId}`,
+        `https://gym-project-server.onrender.com/auth/updateMembership/${userId}`,
         { membershipType: newType },
         { withCredentials: true }
       );
@@ -176,7 +176,7 @@ const UserManagement = () => {
         return;
       }
       const response = await axios.patch(
-        `http://localhost:8000/auth/updateStatus/${userId}`,
+        `https://gym-project-server.onrender.com/auth/updateStatus/${userId}`,
         { status: newStatus },
         { withCredentials: true }
       );
@@ -205,7 +205,7 @@ const UserManagement = () => {
         toast.error("Admin access required");
         return;
       }
-      const response = await axios.delete(`http://localhost:8000/auth/deleteUser/${userId}`, {
+      const response = await axios.delete(`https://gym-project-server.onrender.com/auth/deleteUser/${userId}`, {
         withCredentials: true,
       });
       if (response.data.success) {
@@ -234,7 +234,7 @@ const UserManagement = () => {
         return;
       }
       const response = await axios.patch(
-        `http://localhost:8000/auth/updateUser/${userId}`,
+        `https://gym-project-server.onrender.com/auth/updateUser/${userId}`,
         updatedData,
         { withCredentials: true }
       );

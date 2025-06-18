@@ -19,13 +19,17 @@ export const CartProvider = ({ children }) => {
     try {
       console.log('Adding to cart:', product);
       if (isAuthenticated) {
-        console.log('Requesting: http://localhost:8000/cart/add');
-        const response = await axios.post('http://localhost:8000/cart/add', {
+        console.log('Requesting: https://gym-project-server.onrender.com/cart/add');
+        const response = await axios.post('https://gym-project-server.onrender.com/cart/add', {
           productId: product._id,
           quantity: 1,
-        }, {
-          withCredentials: true,
-        });
+        },  {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+
         if (response.data.success) {
           setCartItems(prev => {
             const existing = prev.find(item => item._id === product._id);
@@ -80,12 +84,16 @@ export const CartProvider = ({ children }) => {
   const syncCartOnLogin = async () => {
     try {
       for (const item of cartItems) {
-        await axios.post('http://localhost:8000/cart/add', {
+        await axios.post('https://gym-project-server.onrender.com/cart/add', {
           productId: item._id,
           quantity: item.quantity,
-        }, {
-          withCredentials: true,
-        });
+        },  {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+
       }
       toast.success('Cart synced with server!');
     } catch (error) {

@@ -34,7 +34,7 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
   const handleSubmit = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:8000/product/updateProduct/${product._id}`,
+        `https://gym-project-server.onrender.com/product/updateProduct/${product._id}`,
         form,
         { withCredentials: true }
       );

@@ -9,65 +9,88 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const login = async ({ token, user }) => {
-    try {
-      setUser(user);
-      // localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      toast.success("Login successful!");
-    } catch (error) {
-      console.error("Login failed", error);
-      toast.error("Login failed");
-    }
-  };
+  try {
+    setUser(user);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    toast.success("Login successful!");
+  } catch (error) {
+    console.error("Login failed", error);
+    toast.error("Login failed");
+  }
+};
 
   const logout = async () => {
     try {
-      await axios.post("http://localhost:8000/auth/logout", {}, { withCredentials: true });
+      await axios.post(
+        "https://gym-project-server.onrender.com/auth/logout",
+        {},
+        { withCredentials: true }
+      );
       setUser(null);
-      localStorage.removeItem("key");
+      localStorage.removeItem("token"); 
+      localStorage.removeItem("user");
       toast.success("Logged out");
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Logout failed", error);
       toast.error("Logout failed");
     }
   };
-  const restoreUser = async () => {
-    try {
-      const response = await axios.post("http://localhost:8000/auth/getUser", {}, {
-        withCredentials: true
-      });
-      if (response.data && response.data.user) {
-        setUser(response.data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
+
+ const restoreUser = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("Token in localStorage:", localStorage.getItem("token"));
+    if (!token) {
       setUser(null);
-    } finally {
       setLoading(false);
+      return;
     }
-  };
+    const response = await axios.post(
+      "https://gym-project-server.onrender.com/auth/getUser",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ This is key
+        },
+        withCredentials: true,
+      }
+    );
+    if (response.data?.user) {
+      setUser(response.data.user);
+    } else {
+      setUser(null);
+    }
+  } catch (error) {
+    setUser(null);
+    console.error("restoreUser failed", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
- useEffect(() => {
-  restoreUser();
-}, []);
-
+  useEffect(() => {
+    restoreUser();
+  }, []);
 
   const isAdmin = () => {
     return user?.role === "admin";
   };
 
-  const value = {
-    user,
-    login,
-    logout,
-    isAdmin,
-    loading,
-    restoreUser
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        isAdmin,
+        loading,
+        restoreUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

@@ -1,7 +1,7 @@
 import express from "express";
 import { loginValidiator, signupValidiation } from "../middlewares/authmiddleware.js";
 import { deleteUser, deleteUserOtp, getUser, loginController, logout, signUpController, updateUser, verifyOtp } from "../controllers/authController.js";
-import { protect } from "../middlewares/auth.js";
+import { auth } from "../middlewares/auth.js";
 import UserModel from "../models/user.model.js";
 
 const router = express.Router();
@@ -23,7 +23,7 @@ router.post('/deleteOtp', deleteUserOtp);
 router.post('/deleteUser', deleteUser);
 
 // Get all users (requires authentication)
-router.get("/users", protect, async (req, res) => {
+router.get("/users", auth, async (req, res) => {
   try {
     const users = await UserModel.find()
       .select("name email membershipType status createdAt role")
@@ -36,7 +36,7 @@ router.get("/users", protect, async (req, res) => {
 });
 
 // Update membership (requires admin)
-router.patch("/updateMembership/:id", protect, async (req, res) => {
+router.patch("/updateMembership/:id", auth, async (req, res) => {
   try {
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ success: false, message: "Admin access required" });
@@ -61,7 +61,7 @@ router.patch("/updateMembership/:id", protect, async (req, res) => {
 });
 
 // Update status (requires admin)
-router.patch("/updateStatus/:id", protect, async (req, res) => {
+router.patch("/updateStatus/:id", auth, async (req, res) => {
   try {
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ success: false, message: "Admin access required" });
@@ -86,7 +86,7 @@ router.patch("/updateStatus/:id", protect, async (req, res) => {
 });
 
 // Delete user (requires admin)
-router.delete("/deleteUser/:id", protect, async (req, res) => {
+router.delete("/deleteUser/:id", auth, async (req, res) => {
   try {
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ success: false, message: "Admin access required" });
@@ -103,7 +103,7 @@ router.delete("/deleteUser/:id", protect, async (req, res) => {
 });
 
 // Update user (requires admin)
-router.patch("/updateUser/:id", protect, async (req, res) => {
+router.patch("/updateUser/:id", auth, async (req, res) => {
   try {
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ success: false, message: "Admin access required" });
@@ -124,12 +124,12 @@ router.patch("/updateUser/:id", protect, async (req, res) => {
   }
 });
 
-router.get("/membership/:userId", protect, async (req, res) => {
+router.get("/membership/:userId", auth, async (req, res) => {
   const user = await UserModel.findById(req.params.userId).select("membershipType membershipEndDate");
   res.json({ success: true, membership: { plan: user.membershipType, endDate: user.membershipEndDate } });
 });
 
-router.patch("/membership/:userId", protect, async (req, res) => {
+router.patch("/membership/:userId", auth, async (req, res) => {
   const { plan } = req.body;
   const user = await UserModel.findByIdAndUpdate(
     req.params.userId,

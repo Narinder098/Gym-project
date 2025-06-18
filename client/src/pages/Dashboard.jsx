@@ -39,9 +39,13 @@ const Dashboard = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get('http://localhost:8000/orders/user', {
-          withCredentials: true,
-        });
+            const response = await axios.get("https://gym-project-server.onrender.com/orders",  {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+
         if (response.data.success) {
           // Deduplicate orders by _id
           const uniqueOrders = Array.from(

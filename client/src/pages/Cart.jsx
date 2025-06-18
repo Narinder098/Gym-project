@@ -64,7 +64,7 @@ const Cart = () => {
         },
       };
       console.log('Placing order:', payload);
-      const response = await axios.post('http://localhost:8000/orders/place', payload, {
+      const response = await axios.post('https://gym-project-server.onrender.com/orders/place', payload, {
         withCredentials: true,
       });
       console.log('Order response:', response.data);

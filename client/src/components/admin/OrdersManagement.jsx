@@ -66,7 +66,7 @@ const OrderManagement = () => {
       try {
         setOrderLoading(true);
         setError(null);
-        const response = await axios.get('http://localhost:8000/orders/admin', {
+        const response = await axios.get('https://gym-project-server.onrender.com/orders/admin', {
           withCredentials: true,
         });
         if (response.data.success) {
@@ -101,7 +101,7 @@ const OrderManagement = () => {
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
       const response = await axios.patch(
-        `http://localhost:8000/orders/${orderId}/status`,
+        `https://gym-project-server.onrender.com/orders/${orderId}/status`,
         { status: newStatus },
         { withCredentials: true }
       );
@@ -124,7 +124,7 @@ const OrderManagement = () => {
   const handleDeleteOrder = async (orderId) => {
     if (!window.confirm('Are you sure you want to delete this order?')) return;
     try {
-      const response = await axios.delete(`http://localhost:8000/orders/${orderId}`, {
+      const response = await axios.delete(`https://gym-project-server.onrender.com/orders/${orderId}`, {
         withCredentials: true,
       });
       if (response.data.success) {

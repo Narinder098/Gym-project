@@ -30,7 +30,7 @@ const Login = () => {
         ? { email: data.email, password: data.password }
         : { name: data.name, email: data.email, password: data.password};
 
-      const response = await axios.post(`http://localhost:8000/auth/${endpoint}`, payload, {
+      const response = await axios.post(`https://gym-project-server.onrender.com/auth/${endpoint}`, payload, {
         withCredentials: true,
       });
       setAuthenticated(true); // Set authenticated state in CartContext

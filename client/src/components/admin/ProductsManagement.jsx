@@ -26,7 +26,7 @@ const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/products/getAllProduct');
+      const res = await axios.get('https://gym-project-server.onrender.com/products/getAllProduct');
       console.log("Fetched products:", res.data);
       setProducts(res.data.products || []);
     } catch (err) {
@@ -38,7 +38,7 @@ const [selectedProduct, setSelectedProduct] = useState(null);
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:8000/product/createProduct', newProduct);
+      const res = await axios.post('https://gym-project-server.onrender.com/product/createProduct', newProduct);
       toast.success('Product added successfully');
       setNewProduct({ name: '', price: '', category: '', stock: '', image: '', description: '' });
       fetchProducts();
@@ -64,7 +64,7 @@ const [selectedProduct, setSelectedProduct] = useState(null);
   //     description: prompt('Enter new product description:', productToEdit.description) || productToEdit.description
   //   };
   //   try {
-  //     await axios.post(`http://localhost:8000/product/updateProduct/${id}`, updatedProduct);
+  //     await axios.post(`https://gym-project-server.onrender.com/product/updateProduct/${id}`, updatedProduct);
   //     toast.success('Product updated successfully');
   //     setProducts(products.map(product => (product._id === id ? updatedProduct : product)));
   //   } catch (err) {
@@ -78,7 +78,7 @@ const [selectedProduct, setSelectedProduct] = useState(null);
     if (!confirmDelete) return;
   
     try {
-      await axios.get(`http://localhost:8000/product/deleteProduct/${id}`);
+      await axios.get(`https://gym-project-server.onrender.com/product/deleteProduct/${id}`);
       setProducts(products.filter(product => product._id !== id));
       toast.success("Product deleted successfully");
     } catch (error) {
