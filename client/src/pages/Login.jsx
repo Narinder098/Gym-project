@@ -71,7 +71,7 @@ const Login = () => {
       <Toaster position="bottom-right" richColors />
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md transform translate-y-4 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]">
         <div className="text-center">
-          <FaDumbbell className="mx-auto h-12 w-12 text-red-500" />
+          <FaDumbbell className="mx-auto h-12 w-12 text-blue-500" />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             {isLogin ? "Sign in to your account" : "Create new account"}
           </h2>
@@ -96,7 +96,7 @@ const Login = () => {
                   placeholder="Name"
                 />
                 {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  <p className="text-blue-500 text-sm mt-1">{errors.name.message}</p>
                 )}
               </div>
             )}
@@ -117,7 +117,7 @@ const Login = () => {
                 placeholder="Email address"
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                <p className="text-blue-500 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
             <div className="relative">
@@ -148,7 +148,7 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300"
             >
               {isLogin ? "Sign in" : "Sign up"}
             </button>
@@ -159,7 +159,7 @@ const Login = () => {
           <button
             type="button"
             onClick={toggleForm}
-            className="text-sm text-red-500 hover:text-red-600 transition-colors duration-300"
+            className="text-sm text-blue-500 hover:text-red-600 transition-colors duration-300"
           >
             {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
           </button>

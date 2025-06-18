@@ -93,7 +93,7 @@ const Shop = () => {
             onClick={() => setSelectedCategory(category.id)}
             className={`px-6 py-3 rounded-full capitalize transition-all duration-300 hover:scale-105 ${
               selectedCategory === category.id
-                ? 'bg-primary text-white'
+                ? 'bg-blue-500 text-white'
                 : 'bg-white text-gray-700 hover:bg-primary hover:text-white'
             }`}
           >
@@ -120,7 +120,7 @@ const Shop = () => {
                   className="w-full h-64 object-cover transform hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute top-2 right-2">
-                  <span className="bg-primary text-white px-3 py-1 rounded-full text-sm">
+                  <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">
                     ${product.price.toFixed(2)}
                   </span>
                 </div>
@@ -132,7 +132,7 @@ const Shop = () => {
                 </p>
                 <button
                   onClick={() => handleAddToCart(product)}
-                  className="w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105"
+                  className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105"
                 >
                   Add to Cart
                 </button>

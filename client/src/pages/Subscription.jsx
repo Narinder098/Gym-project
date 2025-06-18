@@ -96,14 +96,14 @@ const Subscription = () => {
                 alt={plan.name}
                 className="w-full h-48 object-cover"
               />
-              <div className="absolute top-0 right-0 bg-primary text-white px-4 py-2 rounded-bl-lg">
+              <div className="absolute top-0 right-0 bg-blue-500 text-white px-4 py-2 rounded-bl-lg">
                 ${plan.price}/month
               </div>
             </div>
             
             <div className="p-8">
               <div className="flex items-center mb-4">
-                <FaCrown className="text-primary text-2xl mr-2" />
+                <FaCrown className="text-blue-500 text-2xl mr-2" />
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
               </div>
               
@@ -119,7 +119,7 @@ const Subscription = () => {
               <div className="space-y-4">
                 <button
                   onClick={() => handleSubscribe(plan)}
-                  className="w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105 flex items-center justify-center"
+                  className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105 flex items-center justify-center"
                 >
                   <FaDumbbell className="mr-2" />
                   Subscribe Now
@@ -139,21 +139,21 @@ const Subscription = () => {
         <h2 className="text-2xl font-bold mb-4">Subscription Benefits</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="flex items-start">
-            <FaDumbbell className="text-primary text-2xl mr-3 mt-1" />
+            <FaDumbbell className="text-blue-500 text-2xl mr-3 mt-1" />
             <div>
               <h3 className="font-semibold mb-2">Premium Equipment</h3>
               <p className="text-gray-600">Access to state-of-the-art fitness equipment</p>
             </div>
           </div>
           <div className="flex items-start">
-            <FaUserCheck className="text-primary text-2xl mr-3 mt-1" />
+            <FaUserCheck className="text-blue-500 text-2xl mr-3 mt-1" />
             <div>
               <h3 className="font-semibold mb-2">Expert Guidance</h3>
               <p className="text-gray-600">Personal training and professional support</p>
             </div>
           </div>
           <div className="flex items-start">
-            <FaCrown className="text-primary text-2xl mr-3 mt-1" />
+            <FaCrown className="text-blue-500 text-2xl mr-3 mt-1" />
             <div>
               <h3 className="font-semibold mb-2">Exclusive Perks</h3>
               <p className="text-gray-600">Special member benefits and priority access</p>

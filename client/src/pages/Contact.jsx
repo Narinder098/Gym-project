@@ -21,7 +21,7 @@ const Contact = () => {
               {...register('name', { required: 'Name is required' })}
               className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
             />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+            {errors.name && <p className="text-blue-500 text-sm mt-1">{errors.name.message}</p>}
           </div>
           <div>
             <label className="block text-gray-700 mb-2">Email</label>
@@ -36,7 +36,7 @@ const Contact = () => {
               })}
               className="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+            {errors.email && <p className="text-blue-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
           <div>
             <label className="block text-gray-700 mb-2">Message</label>
@@ -49,7 +49,7 @@ const Contact = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105"
           >
             Send Message
           </button>

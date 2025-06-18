@@ -170,6 +170,7 @@ export const loginController = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        pass:user.password,
       },
     });
   } catch (error) {
