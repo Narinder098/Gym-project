@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
  const restoreUser = async () => {
   try {
     const token = localStorage.getItem("token");
-    console.log("Token in localStorage:", localStorage.getItem("token"));
+
     if (!token) {
       setUser(null);
       setLoading(false);
