@@ -56,13 +56,6 @@ const workoutRoutines = [
     exercises: ['Russian Twists', 'Bicycle Crunches', 'Leg Raises', 'Side Plank'],
     level: 'Intermediate',
   },
-  {
-    id: 'upper-body',
-    name: 'Upper Body Pump',
-    duration: '40 mins',
-    exercises: ['Bicep Curls', 'Tricep Dips', 'Shoulder Press', 'Chest Flyes'],
-    level: 'Intermediate',
-  },
 ];
 
 // Static exercises list (expanded to 20)

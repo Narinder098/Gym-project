@@ -14,9 +14,14 @@ const PORT = process.env.PORT || 8000;
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-  origin: "http://localhost:5173", 
-  credentials: true,               
+// app.use(cors({
+//   origin: "http://localhost:5173", 
+//   credentials: true,               
+// }));
+
+app.options('*', cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
 }));
 
 connectDB();
@@ -25,12 +30,10 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-app.use('/auth', router),
-app.use('/products', Productrouter),
+app.use('/auth', router);
+app.use('/products', Productrouter);
 app.use('/cart', cartRoutes);
-app.use('/orders', cartRoutes); 
-
-
+app.use('/orders', cartRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
