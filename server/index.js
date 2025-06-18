@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 app.use(cors({
   // origin: "http://localhost:5173", 
-  origin:"https://sparkly-swan-106dd9.netlify.app/",
+  origin:"https://sparkly-swan-106dd9.netlify.app",
   credentials: true,               
 }));
 
