@@ -40,18 +40,18 @@ export const AuthProvider = ({ children }) => {
  const restoreUser = async () => {
   try {
     const token = localStorage.getItem("token");
-
     if (!token) {
       setUser(null);
       setLoading(false);
       return;
     }
+    
     const response = await axios.post(
       "https://gym-project-server.onrender.com/auth/getUser",
       {},
       {
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ This is key
+          Authorization: `Bearer ${token}`, 
         },
         withCredentials: true,
       }

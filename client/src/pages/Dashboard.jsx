@@ -39,6 +39,7 @@ const Dashboard = () => {
       try {
         setLoading(true);
         setError(null);
+        const token = localStorage.getItem("token");
             const response = await axios.get("https://gym-project-server.onrender.com/orders",  {
       headers: {
         Authorization: `Bearer ${token}`,
