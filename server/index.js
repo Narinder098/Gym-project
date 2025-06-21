@@ -15,10 +15,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  // origin: "http://localhost:5173", 
-  origin:"https://sparkly-swan-106dd9.netlify.app",
-  credentials: true,               
+  origin: [
+    "http://localhost:5173",
+    "https://sparkly-swan-106dd9.netlify.app"
+  ],
+  credentials: true
 }));
+
 
 connectDB();
 
