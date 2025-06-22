@@ -99,7 +99,9 @@ const UserManagement = () => {
       setError(null);
       console.log("Fetching users from /auth/users");
       const res = await axios.get("https://gym-project-server.onrender.com/auth/users", {
-        withCredentials: true,
+       headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log("Response:", res.data);
       let fetchedUsers = [];
@@ -148,7 +150,9 @@ const UserManagement = () => {
       const response = await axios.patch(
         `https://gym-project-server.onrender.com/auth/updateMembership/${userId}`,
         { membershipType: newType },
-        { withCredentials: true }
+        { headers: {
+          Authorization: `Bearer ${token}`,
+        }, }
       );
       if (response.data.success) {
         setUsers((prev) =>
@@ -178,7 +182,11 @@ const UserManagement = () => {
       const response = await axios.patch(
         `https://gym-project-server.onrender.com/auth/updateStatus/${userId}`,
         { status: newStatus },
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.success) {
         setUsers((prev) =>
@@ -206,7 +214,9 @@ const UserManagement = () => {
         return;
       }
       const response = await axios.delete(`https://gym-project-server.onrender.com/auth/deleteUser/${userId}`, {
-        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.data.success) {
         setUsers((prev) => prev.filter((u) => u._id !== userId));
