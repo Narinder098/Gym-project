@@ -157,9 +157,9 @@ export const loginController = async (req, res) => {
 
     res.cookie("sessionToken", token, {
       httpOnly: true,
-      // secure: false, // true in production with HTTPS
-      secure: process.env.NODE_ENV === 'production',
-      // sameSite: "Lax", // "None" for cross-origin
+      secure: false, // true in production with HTTPS
+      // secure: process.env.NODE_ENV === 'production',
+      sameSite: "Lax", // "None" for cross-origin
       sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

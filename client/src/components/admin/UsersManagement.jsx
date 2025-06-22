@@ -97,13 +97,13 @@ const UserManagement = () => {
     try {
       setLoading(true);
       setError(null);
-      const token = localStorage.getItem(token);
+      const token = localStorage.getItem("token");
+
       const res = await axios.get("https://gym-project-server.onrender.com/auth/users", {
-       headers: {
+        headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Response:", res.data);
       let fetchedUsers = [];
       if (res.data.success && Array.isArray(res.data.users)) {
         fetchedUsers = res.data.users;
@@ -147,13 +147,16 @@ const UserManagement = () => {
         toast.error("Admin access required");
         return;
       }
-      const token = localStorage.getItem(token);
+      const token = localStorage.getItem("token");
+
       const response = await axios.patch(
         `https://gym-project-server.onrender.com/auth/updateMembership/${userId}`,
         { membershipType: newType },
-        { headers: {
-          Authorization: `Bearer ${token}`,
-        }, }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.success) {
         setUsers((prev) =>
@@ -180,7 +183,8 @@ const UserManagement = () => {
         toast.error("Admin access required");
         return;
       }
-      const token = localStorage.getItem(token);
+      const token = localStorage.getItem("token");
+
       const response = await axios.patch(
         `https://gym-project-server.onrender.com/auth/updateStatus/${userId}`,
         { status: newStatus },
@@ -215,7 +219,8 @@ const UserManagement = () => {
         toast.error("Admin access required");
         return;
       }
-      const token = localStorage.getItem(token);
+      const token = localStorage.getItem("token");
+
       const response = await axios.delete(`https://gym-project-server.onrender.com/auth/deleteUser/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
