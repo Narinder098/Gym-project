@@ -233,10 +233,15 @@ const UserManagement = () => {
         toast.error("Admin access required");
         return;
       }
+      const token = localStorage.getItem("token");
       const response = await axios.patch(
         `https://gym-project-server.onrender.com/auth/updateUser/${userId}`,
         updatedData,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.success) {
         setUsers((prev) =>

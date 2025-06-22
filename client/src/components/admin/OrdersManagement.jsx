@@ -66,8 +66,11 @@ const OrderManagement = () => {
       try {
         setOrderLoading(true);
         setError(null);
+        const token = localStorage.getItem("token");
         const response = await axios.get('https://gym-project-server.onrender.com/orders/admin', {
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }, 
         });
         if (response.data.success) {
           const uniqueOrders = Array.from(
@@ -152,8 +155,8 @@ const OrderManagement = () => {
     () => (items) =>
       Array.isArray(items)
         ? items
-            .reduce((acc, item) => acc + ((item.product?.price || 0) * (item.quantity || 1)), 0)
-            .toFixed(2)
+          .reduce((acc, item) => acc + ((item.product?.price || 0) * (item.quantity || 1)), 0)
+          .toFixed(2)
         : '0.00',
     []
   );

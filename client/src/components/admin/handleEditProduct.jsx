@@ -33,10 +33,14 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
 
   const handleSubmit = async () => {
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.put(
         `https://gym-project-server.onrender.com/product/updateProduct/${product._id}`,
-        form,
-        { withCredentials: true }
+        form,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
       );
       toast.success("Product updated successfully");
       onProductUpdated(res.data.product);
