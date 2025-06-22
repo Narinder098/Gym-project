@@ -171,6 +171,7 @@ export const loginController = async (req, res) => {
         email: user.email,
         role: user.role,
         pass:user.password,
+        token:user.token,
       },
     });
   } catch (error) {

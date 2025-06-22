@@ -124,8 +124,9 @@ export const placeOrder = async (req, res) => {
 // Get current user's orders
 export const getUserOrders = async (req, res) => {
   try {
+    console.log('getUserOrders - req.user:', req.user);
     if (!req.user || !req.user.id) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
+      return res.status(401).json({ success: false, error: true, message: 'Unauthorized: No user ID' });
     }
     const orders = await OrderModel.find({ user: req.user.id })
       .populate({
@@ -133,10 +134,11 @@ export const getUserOrders = async (req, res) => {
         select: 'name price image',
       })
       .sort({ createdAt: -1 });
+    console.log('getUserOrders - Orders found:', orders.length);
     return res.status(200).json({ success: true, orders });
   } catch (error) {
-    console.error('getUserOrders - Error:', error);
-    return res.status(500).json({ success: false, message: 'Error fetching orders', error: error.message });
+    console.error('getUserOrders - Error:', error.message, error.stack);
+    return res.status(500).json({ success: false, error: true, message: 'Error fetching orders', error: error.message });
   }
 };
 
