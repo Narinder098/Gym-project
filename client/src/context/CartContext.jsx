@@ -19,8 +19,8 @@ export const CartProvider = ({ children }) => {
     try {
       console.log('Adding to cart:', product);
       if (isAuthenticated) {
-        console.log('Requesting: https://gym-project-server.onrender.com/cart/add');
-        const response = await axios.post('https://gym-project-server.onrender.com/cart/add', {
+        console.log('Requesting:    https://gym-project-server.onrender.com/cart/add');
+        const response = await axios.post('   https://gym-project-server.onrender.com/cart/add', {
           productId: product._id,
           quantity: 1,
         },  {
@@ -84,7 +84,7 @@ export const CartProvider = ({ children }) => {
   const syncCartOnLogin = async () => {
     try {
       for (const item of cartItems) {
-        await axios.post('https://gym-project-server.onrender.com/cart/add', {
+        await axios.post('   https://gym-project-server.onrender.com/cart/add', {
           productId: item._id,
           quantity: item.quantity,
         },  {

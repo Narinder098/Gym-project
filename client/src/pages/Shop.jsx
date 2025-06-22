@@ -23,8 +23,8 @@ const Shop = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://gym-project-server.onrender.com/products/getAllProduct');
-        console.log('Fetch products response:', response.data); // Debug
+        const response = await axios.get(' https://gym-project-server.onrender.com/products/getAllProduct');
+        console.log('Fetch products response:', response.data); 
         const productsData = response.data.products || response.data;
         if (Array.isArray(productsData)) {
           setProducts(productsData);

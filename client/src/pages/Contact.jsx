@@ -1,13 +1,25 @@
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const Contact = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    toast.success('Message sent successfully!');
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/contact`, data, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        toast.success('Message sent successfully!');
+        reset();
+      } else {
+        toast.error(response.data.message || 'Failed to send message');
+      }
+    } catch (err) {
+      console.error('Error sending message:', err.response?.data || err.message);
+      toast.error('Error sending message');
+    }
   };
 
   return (

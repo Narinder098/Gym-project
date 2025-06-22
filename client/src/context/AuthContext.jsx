@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   try {
     setUser(user);
     localStorage.setItem("token", token);
+    console.log(token);
     localStorage.setItem("user", JSON.stringify(user));
     toast.success("Login successful!");
   } catch (error) {
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await axios.post(
-        "https://gym-project-server.onrender.com/auth/logout",
+        " https://gym-project-server.onrender.com/auth/logout",
         {},
         { withCredentials: true }
       );
@@ -45,7 +46,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       return;
     }
-    
     const response = await axios.post(
       "https://gym-project-server.onrender.com/auth/getUser",
       {},
@@ -56,6 +56,9 @@ export const AuthProvider = ({ children }) => {
         withCredentials: true,
       }
     );
+    
+    console.log("res",response.data?.user)
+
     if (response.data?.user) {
       setUser(response.data.user);
     } else {

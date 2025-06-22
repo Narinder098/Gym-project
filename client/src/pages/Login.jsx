@@ -35,7 +35,10 @@ const Login = () => {
       });
       setAuthenticated(true); // Set authenticated state in CartContext
 
-      const { token } = response.data;
+      const { token } = response.data.user;
+      // console.log("res", response.data)
+      localStorage.setItem("token",token);
+      // console.log(token);
 
       await login({ token, user: response.data.user });
 
