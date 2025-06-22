@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import PropTypes from "prop-types";
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from '../LoadingSpinner';
+import TableSkeleton from '../TableSkeleton';
 
 // Constants
 const STATUS_COLORS = {
@@ -305,23 +307,24 @@ const UserManagement = () => {
   );
 
   // Loading and Error States
-  if (authLoading || loading) {
-    return <div className="text-center py-10 text-gray-600">Loading...</div>;
+  if (authLoading) {
+    return <LoadingSpinner />;
   }
-
+  if (loading) {
+    return <TableSkeleton />;
+  }
   if (error) {
     return (
-      <div className="text-center text-red-500 mt-8">
+      <div className="text-center py-10 text-gray-600">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Users Management</h2>
-        <p>{error}</p>
+        <p className="text-red-500">{error}</p>
         <button
           onClick={() => {
             setRetryLoading(true);
             fetchUsers();
           }}
           disabled={retryLoading}
-          className={`mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 ${retryLoading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+          className={`mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 ${retryLoading ? "opacity-50 cursor-not-allowed" : ""}`}
         >
           {retryLoading ? "Retrying..." : "Retry"}
         </button>

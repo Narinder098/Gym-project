@@ -22,7 +22,6 @@ app.use(cors({
   credentials: true
 }));
 
-
 connectDB();
 
 app.get('/', (req, res) => {

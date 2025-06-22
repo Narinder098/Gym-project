@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { FaSearch } from 'react-icons/fa';
 import axios from 'axios';
+import OrderSkeleton from '../components/OrderSkeleton';
+import LoadingSpinner from '../components/LoadingSpinner';
+
 
 const categories = [
   { id: 'all', name: 'All Products' },
@@ -59,7 +62,7 @@ const Shop = () => {
     addToCart(product);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className='min-h-screen'><LoadingSpinner/></div>;
   if (error) return <div>{error}</div>;
 
   return (

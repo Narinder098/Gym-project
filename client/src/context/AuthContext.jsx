@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AuthContext = createContext();
 
@@ -9,17 +10,17 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const login = async ({ token, user }) => {
-  try {
-    setUser(user);
-    localStorage.setItem("token", token);
-    console.log(token);
-    localStorage.setItem("user", JSON.stringify(user));
-    toast.success("Login successful!");
-  } catch (error) {
-    console.error("Login failed", error);
-    toast.error("Login failed");
-  }
-};
+    try {
+      setUser(user);
+      localStorage.setItem("token", token);
+      console.log(token);
+      localStorage.setItem("user", JSON.stringify(user));
+      toast.success("Login successful!");
+    } catch (error) {
+      console.error("Login failed", error);
+      toast.error("Login failed");
+    }
+  };
 
   const logout = async () => {
     try {
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         { withCredentials: true }
       );
       setUser(null);
-      localStorage.removeItem("token"); 
+      localStorage.removeItem("token");
       localStorage.removeItem("user");
       toast.success("Logged out");
     } catch (error) {
@@ -38,39 +39,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
- const restoreUser = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-    const response = await axios.post(
-      "https://gym-project-server.onrender.com/auth/getUser",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-        withCredentials: true,
+  const restoreUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
       }
-    );
-    
-    console.log("res",response.data?.user)
+      const response = await axios.post(
+        "https://gym-project-server.onrender.com/auth/getUser",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
 
-    if (response.data?.user) {
-      setUser(response.data.user);
-    } else {
+      console.log("res", response.data?.user)
+
+      if (response.data?.user) {
+        setUser(response.data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
       setUser(null);
+      console.error("restoreUser failed", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    setUser(null);
-    console.error("restoreUser failed", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
     restoreUser();
@@ -79,6 +80,10 @@ export const AuthProvider = ({ children }) => {
   const isAdmin = () => {
     return user?.role === "admin";
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <AuthContext.Provider

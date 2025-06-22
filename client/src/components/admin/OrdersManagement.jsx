@@ -7,6 +7,9 @@ import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../LoadingSpinner';
+import OrderSkeleton from '../OrderSkeleton';
+
 
 // Constants
 const STATUS_COLORS = {
@@ -162,8 +165,11 @@ const OrderManagement = () => {
   );
 
   // Combined loading state
-  if (authLoading || orderLoading) {
-    return <div className="text-center py-10 text-gray-600">Loading...</div>;
+  if (authLoading) {
+    return <LoadingSpinner/>
+  }
+  if ( orderLoading){
+    return <OrderSkeleton/>
   }
 
   if (error) {

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import LoadingSpinner from '../LoadingSpinner';
+
 
 const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
   const [form, setForm] = useState({
@@ -50,6 +52,10 @@ const EditProductModal = ({ isOpen, onClose, product, onProductUpdated }) => {
       console.error(err);
     }
   };
+
+  if(loading){
+    return <LoadingSpinner/>
+  }
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="fixed z-50 inset-0 overflow-y-auto">
