@@ -52,8 +52,10 @@ export const signUpController = async (req, res) => {
     // Set cookie
     res.cookie("sessionToken", token, {
       httpOnly: true,
-      secure: false, // true in production with HTTPS
-      sameSite: "Lax", // "None" for cross-origin
+      secure: true, // true in production with HTTPS
+      // secure: false, // true in production with HTTPS
+      sameSite: "none", // "None" for cross-origin
+      // sameSite: "Lax", // "None" for cross-origin
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -158,7 +160,7 @@ export const loginController = async (req, res) => {
       // secure: false, // true in production with HTTPS
       secure: process.env.NODE_ENV === 'production',
       // sameSite: "Lax", // "None" for cross-origin
-      sameSite: 'strict',
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
