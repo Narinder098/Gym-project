@@ -41,7 +41,7 @@ const Navbar = () => {
           {/* Right Side */}
           <div className="flex items-center space-x-4">
             {/* Cart Icon - hidden on small screens */}
-            <Link to="/cart" className="relative transition-transform duration-300 hover:scale-110 hidden md:inline-block">
+            <Link to="/cart" className="relative transition-transform duration-300 hover:scale-110 inline-block">
               <FaShoppingCart className="text-2xl text-gray-700 hover:text-primary" />
               {cartItems.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">

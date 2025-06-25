@@ -129,7 +129,7 @@ const Cart = () => {
   );
 
   const renderOrderSummary = () => (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className=" bg-white rounded-lg shadow-md p-6">
       <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
       <div className="space-y-2">
         <SummaryRow label="Subtotal" value={subtotal} />
@@ -195,7 +195,7 @@ const Cart = () => {
 
   if (!cartItems.length) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
+      <div className="h-screen mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl font-bold mb-8">Your Cart is Empty</h1>
         <button onClick={() => navigate('/shop')} className="bg-primary text-white px-8 py-3 rounded-lg hover:bg-red-600">
           Continue Shopping
@@ -205,7 +205,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className=" container mx-auto px-4 py-16">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {step === 'cart' && renderCartItems()}
