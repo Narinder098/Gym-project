@@ -172,8 +172,8 @@ export const loginController = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        pass:user.password,
-        token:user.token,
+        pass: user.password,
+        token: user.token,
       },
     });
   } catch (error) {
@@ -183,12 +183,18 @@ export const loginController = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const token = req.cookies.sessionToken;
+    const token =
+      req.headers.authorization?.startsWith('Bearer ')
+        ? req.headers.authorization.split(' ')[1]
+        : req.cookies.sessionToken;
     if (!token) return res.status(401).json({ message: "Unauthorized, please login", success: false });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await UserModel.findById(decoded._id).select("-password");
-    res.status(200).json({ success: true, user });
+    if (!user) {
+      return res.status(401).json({ message: "User not found", success: false });
+    }
+    return res.status(200).json({ success: true, user });
   } catch (error) {
     res.status(401).json({ message: "Invalid or expired token", success: false });
   }

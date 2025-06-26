@@ -2,23 +2,26 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const OrderSkeleton = () => {
-  const rowCount = 1; // Adjust based on typical order count
   return (
-    <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1 animate-pulse">
-      {[...Array(rowCount)].map((_, index) => (
-        <motion.div
-          key={index}
-          className="bg-white p-4 rounded-lg shadow"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 }}
-        >
-          <div className="h-6 w-3/4 bg-gray-200 rounded mb-2" />
-          <div className="h-4 w-2/3 bg-gray-200 rounded mb-2"  />
-          <div className="h-2 w-1/3 bg-gray-200 rounded" />
-        </motion.div>
-      ))}
-    </div>
+    <motion.div
+      className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="relative overflow-hidden">
+        <div className="w-full h-64 bg-gray-200" />
+        <div className="absolute top-2 right-2">
+          <span className="bg-gray-200 h-6 w-16 rounded-full" />
+        </div>
+      </div>
+      <div className="p-6">
+        <div className="h-6 bg-gray-200 rounded mb-2 w-3/4" />
+        <div className="h-4 bg-gray-200 rounded mb-4 w-full" />
+        <div className="h-4 bg-gray-200 rounded mb-4 w-5/6" />
+        <div className="h-10 bg-gray-200 rounded-lg w-full" />
+      </div>
+    </motion.div>
   );
 };
 

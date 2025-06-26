@@ -7,7 +7,7 @@ import axios from 'axios';
 import WorkoutPlanner from './WorkoutPlanner';
 import Progress from './Progress';
 import toast from 'react-hot-toast';
-import LoadingSpinner from '../components/LoadingSpinner';
+import DashboardSkeleton from '../components/DashboardSkeleton';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -94,7 +94,11 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return  <div className='min-h-screen'><LoadingSpinner/></div>;
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <DashboardSkeleton />
+      </div>
+    );
   }
 
   const formatShippingAddress = (address) => {
@@ -103,7 +107,6 @@ const Dashboard = () => {
     return [street, city, state, postalCode, country].filter(Boolean).join(', ') || 'Not Provided';
   };
 
-  // Format workout date
   const formatWorkoutDate = (isoString) => {
     return new Date(isoString).toLocaleString('en-US', {
       year: 'numeric',
@@ -114,14 +117,13 @@ const Dashboard = () => {
     });
   };
 
-  // Format workout timer
   const formatTimer = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const stats = []; // Keep empty as in original
+  const stats = [];
 
   const renderOverview = () => (
     <div className="space-y-6">

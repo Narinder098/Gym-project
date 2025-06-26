@@ -11,7 +11,7 @@ import { useCart } from "../context/CartContext";
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const { user, login } = useAuth();
+  const { user, login , loading} = useAuth();
   const navigate = useNavigate();
   const { restoreUser } = useAuth();
   const { setAuthenticated } = useCart();

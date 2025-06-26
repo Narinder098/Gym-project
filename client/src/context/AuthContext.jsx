@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
     try {
       setUser(user);
       localStorage.setItem("token", token);
-      console.log(token);
       localStorage.setItem("user", JSON.stringify(user));
       toast.success("Login successful!");
     } catch (error) {
@@ -26,7 +25,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(
         " https://gym-project-server.onrender.com/auth/logout",
-        {},
         { withCredentials: true }
       );
       setUser(null);
@@ -49,7 +47,6 @@ export const AuthProvider = ({ children }) => {
       }
       const response = await axios.post(
         "https://gym-project-server.onrender.com/auth/getUser",
-        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,

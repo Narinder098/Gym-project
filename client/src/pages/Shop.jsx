@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { FaSearch } from 'react-icons/fa';
 import axios from 'axios';
-import OrderSkeleton from '../components/OrderSkeleton';
-import LoadingSpinner from '../components/LoadingSpinner';
-
+import ProductSkeleton from '../components/OrderSkeleton';
 
 const categories = [
   { id: 'all', name: 'All Products' },
@@ -26,8 +24,8 @@ const Shop = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(' https://gym-project-server.onrender.com/products/getAllProduct');
-        console.log('Fetch products response:', response.data); 
+        const response = await axios.get('https://gym-project-server.onrender.com/products/getAllProduct');
+        console.log('Fetch products response:', response.data);
         const productsData = response.data.products || response.data;
         if (Array.isArray(productsData)) {
           setProducts(productsData);
@@ -58,12 +56,11 @@ const Shop = () => {
     : [];
 
   const handleAddToCart = (product) => {
-    console.log('Adding to cart:', product); // Debug
+    console.log('Adding to cart:', product);
     addToCart(product);
   };
 
-  if (loading) return <div className='min-h-screen'><LoadingSpinner/></div>;
-  if (error) return <div>{error}</div>;
+  if (error) return <div className="text-center text-red-500 py-16">{error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -82,7 +79,7 @@ const Shop = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search products..."
-            className="w-full px-6 py-4 rounded-full border-2 border-gray-300 focus:outline-none focus:border-primary transition-colors duration-300"
+            className="w-full px-6 py-4 rounded-full border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
           />
           <FaSearch className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
@@ -97,7 +94,7 @@ const Shop = () => {
             className={`px-6 py-3 rounded-full capitalize transition-all duration-300 hover:scale-105 ${
               selectedCategory === category.id
                 ? 'bg-blue-500 text-white'
-                : 'bg-white text-gray-700 hover:bg-primary hover:text-white'
+                : 'bg-white text-gray-700 hover:bg-blue-500 hover:text-white'
             }`}
           >
             {category.name}
@@ -107,7 +104,12 @@ const Shop = () => {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          // Display skeleton loaders in the grid
+          Array.from({ length: 8 }).map((_, index) => (
+            <ProductSkeleton key={index} />
+          ))
+        ) : filteredProducts.length > 0 ? (
           filteredProducts.map((product, index) => (
             <div
               key={product._id || index}
