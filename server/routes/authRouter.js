@@ -139,19 +139,6 @@ router.patch("/membership/:userId", auth, async (req, res) => {
   res.json({ success: true, membership: { plan: user.membershipType, endDate: user.membershipEndDate } });
 });
 
-router.get('/admin/dashboard-stats', auth,isAdmin, async (req, res) => {
-  try {
-    const totalUsers = await UserModel.countDocuments();
-    const totalExercises = await ExerciseModel.countDocuments();
-    const totalProducts = await ProductModel.countDocuments();
-    const totalOrders = await OrderModel.countDocuments();
-
-    res.json({ totalUsers, totalExercises, totalProducts, totalOrders });
-  } catch (err) {
-    console.error("Dashboard stats error:", err);
-    res.status(500).json({ message: "Failed to load stats" });
-  }
-});
 
 
 export default router;
