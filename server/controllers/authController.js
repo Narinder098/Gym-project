@@ -186,7 +186,7 @@ export const getUser = async (req, res) => {
     const token =
       req.headers.authorization?.startsWith('Bearer ')
         ? req.headers.authorization.split(' ')[1]
-        : req.cookies.sessionTokens;
+        : req.cookies.sessionToken;
     if (!token) return res.status(401).json({ message: "Unauthorized, please login", success: false });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(
         " https://gym-project-server.onrender.com/auth/logout",
+        {},
         { withCredentials: true }
       );
       setUser(null);
@@ -45,8 +46,10 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
         return;
       }
+
       const response = await axios.post(
         "https://gym-project-server.onrender.com/auth/getUser",
+        {}, 
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,9 +57,9 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true,
         }
       );
-      console.log(token)
 
-      console.log("res", response.data?.user)
+      console.log("Token:", token);
+      console.log("res", response.data?.user); 
 
       if (response.data?.user) {
         setUser(response.data.user);
@@ -64,12 +67,13 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
       }
     } catch (error) {
+      console.error("restoreUser failed", error); 
       setUser(null);
-      console.error("restoreUser failed", error);
     } finally {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     restoreUser();
