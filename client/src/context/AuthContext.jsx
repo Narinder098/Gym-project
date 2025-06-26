@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true,
         }
       );
+      console.log(token)
 
       console.log("res", response.data?.user)
 
