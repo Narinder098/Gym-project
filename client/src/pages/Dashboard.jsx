@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { FaUser, FaDumbbell, FaCalendar, FaChartLine, FaShoppingBag, FaCrown, FaCreditCard, FaBell, FaMapMarkerAlt, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaDumbbell, FaCalendar, FaChartLine, FaShoppingBag, FaCrown, FaCreditCard, FaBell, FaMapMarkerAlt, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -12,6 +12,7 @@ import DashboardSkeleton from '../components/DashboardSkeleton';
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [completedWorkouts, setCompletedWorkouts] = useState([]);
@@ -29,7 +30,6 @@ const Dashboard = () => {
       navigate('/login');
       toast.error('Please log in to access the dashboard');
     } else {
-      // Load completed workouts from localStorage
       const storedWorkouts = JSON.parse(localStorage.getItem('completedWorkouts') || '[]');
       setCompletedWorkouts(storedWorkouts);
     }
@@ -40,11 +40,11 @@ const Dashboard = () => {
       try {
         setLoading(true);
         setError(null);
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         if (!token) {
           throw new Error('No token found in localStorage');
         }
-        const response = await axios.get("https://gym-project-server.onrender.com/orders/user", {
+        const response = await axios.get('https://gym-project-server.onrender.com/orders/user', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -63,7 +63,7 @@ const Dashboard = () => {
           message: err.message,
           response: err.response?.data,
           status: err.response?.status,
-          token: localStorage.getItem("token"),
+          token: localStorage.getItem('token'),
         });
         if (err.response?.status === 401 || err.message === 'No token found in localStorage') {
           setError('Unauthorized: Please log in again');
@@ -93,9 +93,13 @@ const Dashboard = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         <DashboardSkeleton />
       </div>
     );
@@ -112,8 +116,6 @@ const Dashboard = () => {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
     });
   };
 
@@ -123,82 +125,58 @@ const Dashboard = () => {
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const stats = [];
-
   const renderOverview = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm">{stat.label}</p>
-                <p className="text-2xl font-semibold text-gray-900 mt-2">{stat.value}</p>
-              </div>
-              <stat.icon className="text-blue-600 text-3xl" />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-white rounded-xl shadow-lg p-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white rounded-lg shadow-md p-6"
       >
         <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
           <FaShoppingBag className="text-blue-600 mr-2" />
           Recent Orders
         </h3>
         <div className="space-y-4">
-          {loading ? (
-            <p className="text-gray-600">Loading orders...</p>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
+          {error ? (
+            <p className="text-red-500 text-center">{error}</p>
           ) : Array.isArray(orders) && orders.length > 0 ? (
             orders.slice(0, 3).map((order) => (
-              <motion.div
+              <div
                 key={order._id}
-                className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0 hover:bg-gray-50 transition-colors duration-200"
-                whileHover={{ scale: 1.02 }}
+                className="border-b border-gray-200 py-4 last:border-b-0"
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-medium text-gray-900">Order #{order._id.slice(-6)}</span>
+                  <span className="font-medium text-gray-900 text-base">Order #{order._id.slice(-6)}</span>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
                       order.status === 'Shipped' ? 'bg-blue-100 text-blue-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }`}
+                      'bg-yellow-100 text-yellow-700'
+                    }`}
                   >
                     {order.status || 'Pending'}
                   </span>
                 </div>
                 <p className="text-gray-500 text-sm mt-1">
-                  {order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Date not available'}
+                  {order.createdAt ? formatWorkoutDate(order.createdAt) : 'Date not available'}
                 </p>
-                <p className="text-blue-600 font-semibold mt-1">
-                  ${order.totalPrice ? order.totalPrice.toFixed(2) : (Array.isArray(order.items) ? order.items.reduce((acc, item) => acc + ((item.product?.price || 0) * (item.quantity || 1)), 0) : 0).toFixed(2)}
+                <p className="text-blue-600 font-semibold text-base mt-1">
+                  ${order.totalPrice ? order.totalPrice.toFixed(2) : '0.00'}
                 </p>
-              </motion.div>
+              </div>
             ))
           ) : (
-            <p className="text-gray-600">No orders available</p>
+            <p className="text-gray-600 text-center">No orders available</p>
           )}
         </div>
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="bg-white rounded-xl shadow-lg p-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-white rounded-lg shadow-md p-6"
       >
         <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
           <FaDumbbell className="text-blue-600 mr-2" />
@@ -206,24 +184,20 @@ const Dashboard = () => {
         </h3>
         <div className="space-y-4">
           {completedWorkouts.length > 0 ? (
-            completedWorkouts.slice(0, 3).map((workout, index) => (
-              <motion.div
+            completedWorkouts.slice(0, 3).map((workout) => (
+              <div
                 key={workout.id}
-                className="flex justify-between items-center border-b border-gray-200 pb-4 last:border-b-0 last:pb-0 hover:bg-gray-50 transition-colors duration-200"
-                whileHover={{ scale: 1.02 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
+                className="flex justify-between items-center border-b border-gray-200 py-4 last:border-b-0"
               >
                 <div>
-                  <h4 className="font-medium text-gray-900">{workout.name}</h4>
+                  <h4 className="font-medium text-gray-900 text-base">{workout.name}</h4>
                   <p className="text-gray-500 text-sm">{formatWorkoutDate(workout.completedAt)}</p>
                 </div>
-                <span className="text-blue-600">{formatTimer(workout.timerSeconds)}</span>
-              </motion.div>
+                <span className="text-blue-600 text-base">{formatTimer(workout.timerSeconds)}</span>
+              </div>
             ))
           ) : (
-            <p className="text-gray-600">No workouts completed yet.</p>
+            <p className="text-gray-600 text-center">No workouts completed yet</p>
           )}
         </div>
       </motion.div>
@@ -231,14 +205,10 @@ const Dashboard = () => {
   );
 
   const renderOrders = () => {
-    if (loading) {
-      return <div className="text-center py-10 text-gray-600">Loading orders...</div>;
-    }
-
     if (error) {
       return (
-        <div className="text-center text-red-500 mt-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Order History</h2>
+        <div className="text-center text-red-500 py-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
           <p>{error}</p>
         </div>
       );
@@ -246,77 +216,73 @@ const Dashboard = () => {
 
     if (!Array.isArray(orders) || orders.length === 0) {
       return (
-        <div className="text-center text-gray-600 mt-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Order History</h2>
-          <p>No orders available.</p>
+        <div className="text-center text-gray-600 py-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
+          <p>No orders available</p>
         </div>
       );
     }
 
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Order History</h2>
-        {orders.map((order, orderIndex) => (
-          <motion.div
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
+        {orders.map((order) => (
+          <div
             key={order._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: orderIndex * 0.1 }}
-            className="bg-white rounded-xl shadow-lg p-6 mb-4 hover:shadow-xl transition-shadow duration-300"
+            className="bg-white rounded-lg shadow-md p-6 mb-4"
           >
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900">Order #{order._id.slice(-6)}</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Order #{order._id.slice(-6)}</h3>
                 <p className="text-gray-500 text-sm">
-                  {order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Date not available'}
+                  {order.createdAt ? formatWorkoutDate(order.createdAt) : 'Date not available'}
                 </p>
               </div>
               <span
-                className={`px-4 py-2 rounded-full text-sm font-medium ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
                   order.status === 'Shipped' ? 'bg-blue-100 text-blue-700' :
-                    'bg-yellow-100 text-yellow-700'
-                  }`}
+                  'bg-yellow-100 text-yellow-700'
+                }`}
               >
                 {order.status || 'Pending'}
               </span>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {Array.isArray(order.items) && order.items.length > 0 ? (
-                order.items.map((item, index) => (
+                order.items.slice(0, 2).map((item, index) => (
                   <div
                     key={item._id || item.product?._id || `${order._id}-${index}`}
-                    className="flex justify-between items-center border-b border-gray-200 pb-4 last:border-b-0"
+                    className="flex justify-between items-center"
                   >
                     <div>
-                      <p className="font-medium text-gray-900">{item.product?.name || 'Unknown Product'}</p>
-                      <p className="text-gray-500 text-sm">Quantity: {item.quantity || 1}</p>
+                      <p className="font-medium text-gray-900 text-base">{item.product?.name || 'Unknown Product'}</p>
+                      <p className="text-gray-500 text-sm">Qty: {item.quantity || 1}</p>
                     </div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 text-base">
                       ${(item.product?.price ? item.product.price.toFixed(2) : '0.00')}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600">No items in this order.</p>
+                <p className="text-gray-600 text-sm">No items in this order</p>
               )}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-semibold text-gray-900">Total</span>
-                <span className="font-semibold text-xl text-gray-900">
-                  ${order.totalPrice ? order.totalPrice.toFixed(2) : (Array.isArray(order.items) ? order.items.reduce((acc, item) => acc + ((item.product?.price || 0) * (item.quantity || 1)), 0) : 0).toFixed(2)}
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-900 text-base">Total</span>
+                <span className="font-semibold text-gray-900 text-base">
+                  ${order.totalPrice ? order.totalPrice.toFixed(2) : '0.00'}
                 </span>
               </div>
-              <div className="space-y-2 text-gray-600">
-                <div className="flex items-center">
-                  <FaMapMarkerAlt className="mr-2 text-blue-600" />
-                  <span>{formatShippingAddress(order.shippingAddress)}</span>
-                </div>
+              <div className="text-gray-600 text-sm mt-2 flex items-center">
+                <FaMapMarkerAlt className="mr-2 text-blue-600" />
+                <span>{formatShippingAddress(order.shippingAddress)}</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     );
@@ -324,83 +290,87 @@ const Dashboard = () => {
 
   const renderProfile = () => (
     <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl shadow-lg p-8 max-w-lg mx-auto"
-      >
-        <div className="flex flex-col items-center space-y-4 mb-8">
+      <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+        <div className="flex flex-col items-center space-y-4 mb-6">
           <img
             src={user.avatar || 'https://picsum.photos/80'}
             alt={user.name}
-            className="w-20 h-20 rounded-full border-2 border-blue-100"
+            className="w-16 h-16 rounded-full border-2 border-blue-100"
             onError={handleImageError}
           />
           <div className="text-center">
-            <h3 className="text-2xl font-semibold text-gray-900">{user.name}</h3>
-            <p className="text-gray-500">{user.email}</p>
-            <p className="text-sm text-gray-400">Member since {user.memberSince || 'Unknown'}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
+            <p className="text-gray-500 text-sm">{user.email}</p>
+            <p className="text-gray-400 text-sm">Member since {user.memberSince || 'Unknown'}</p>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center">
               <FaCrown className="text-blue-600 mr-2" />
-              <span className="text-gray-700">Membership Status</span>
+              <span className="text-gray-700 text-base">Membership</span>
             </div>
-            <span className="text-green-600 font-semibold">Active</span>
+            <span className="text-green-600 font-semibold text-sm">Active</span>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center">
               <FaCreditCard className="text-blue-600 mr-2" />
-              <span className="text-gray-700">Payment Method</span>
+              <span className="text-gray-700 text-base">Payment</span>
             </div>
-            <span className="text-gray-500">•••• •••• •••• 4242</span>
+            <span className="text-gray-500 text-sm">•••• 4242</span>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all">
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center">
               <FaBell className="text-blue-600 mr-2" />
-              <span className="text-gray-700">Notifications</span>
+              <span className="text-gray-700 text-base">Notifications</span>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:h-5 after:w-5 after:rounded-full after:transition-all duration-200"></div>
+              <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:h-4 after:w-4 after:rounded-full after:transition-all duration-200"></div>
             </label>
           </div>
         </div>
 
         <button
           onClick={handleDelete}
-          className="mt-8 w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium"
+          className="mt-6 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium text-base"
         >
           Delete Account
         </button>
-      </motion.div>
+      </div>
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="flex flex-col lg:flex-row gap-6">
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      {/* Mobile Header with Toggle */}
+      <div className="flex items-center justify-between md:hidden mb-4">
+        <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
+        <button onClick={toggleSidebar} className="text-gray-600">
+          {isSidebarOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
+        </button>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-6">
         {/* Sidebar */}
-        <div className="lg:w-64 lg:sticky lg:top-6">
-          <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block md:w-64 md:sticky md:top-6`}>
+          <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center gap-4 mb-6">
               <img
-                src={user.avatar || 'https://picsum.photos/200'}
+                src={user.avatar || 'https://picsum.photos/80'}
                 alt={user.name}
-                className="w-12 h-12 rounded-lg border-2 border-blue-200"
+                className="w-12 h-12 rounded-lg border-2 border-blue-100"
                 onError={handleImageError}
               />
               <div>
-                <h3 className="font-semibold text-gray-900">{user.name}</h3>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <h3 className="font-semibold text-gray-900 text-base">{user.name}</h3>
+                <p className="text-gray-500 text-sm">{user.email}</p>
               </div>
             </div>
-            <nav className="space-y-2 font-medium">
+            <nav className="space-y-2">
               {[
                 { name: FaChartLine, value: 'overview', icon: 'Overview' },
                 { name: FaCalendar, value: 'planner', icon: 'Workout Planner' },
@@ -410,11 +380,15 @@ const Dashboard = () => {
               ].map((item) => (
                 <button
                   key={item.value}
-                  onClick={() => setActiveTab(item.value)}
-                  className={`w-full flex items-center gap-x-2 px-4 py-2 rounded-lg transition-colors duration-200 ${activeTab === item.value
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                  onClick={() => {
+                    setActiveTab(item.value);
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-x-2 px-4 py-3 rounded-lg text-base transition-colors duration-200 ${
+                    activeTab === item.value
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
                   <item.name className="text-lg" />
                   <span>{item.icon}</span>
@@ -422,7 +396,7 @@ const Dashboard = () => {
               ))}
               <button
                 onClick={logout}
-                className="w-full flex items-center gap-x-2 px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200"
+                className="w-full flex items-center gap-x-2 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200 text-base"
               >
                 <FaSignOutAlt className="text-lg" />
                 <span>Logout</span>

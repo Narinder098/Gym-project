@@ -35,9 +35,11 @@ const AdminOverview = () => {
       {
         label: 'Sales',
         data: [30, 45, 35, 50, 40, 60],
-        fill: false,
         borderColor: '#ff2625',
-        tension: 0.1
+        backgroundColor: 'rgba(255, 38, 37, 0.1)',
+        tension: 0.4,
+        pointRadius: 5,
+        fill: true
       }
     ]
   };
@@ -45,70 +47,54 @@ const AdminOverview = () => {
   const chartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: 'top'
-      },
-      title: {
-        display: true,
-        text: 'Monthly Sales'
-      }
+      legend: { position: 'top' },
+      title: { display: true, text: 'Monthly Sales' }
     }
   };
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard Overview</h1>
-      
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-md p-6 transform hover:-translate-y-1 transition-all duration-300"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500">{stat.title}</p>
-                <p className="text-2xl font-bold mt-2">{stat.value}</p>
-              </div>
-              <div className={`${stat.color} p-3 rounded-full`}>
-                <stat.icon className="text-white text-xl" />
-              </div>
+      <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {stats.map((stat, idx) => (
+          <div key={idx} className="bg-white p-5 rounded-xl shadow flex justify-between items-center">
+            <div>
+              <p className="text-gray-500">{stat.title}</p>
+              <p className="text-2xl font-bold">{stat.value}</p>
+            </div>
+            <div className={`${stat.color} p-3 rounded-full`}>
+              <stat.icon className="text-white text-lg" />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Charts */}
+      {/* Charts and Activities */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
+        {/* Sales Chart */}
+        <div className="bg-white p-6 rounded-xl shadow">
           <Line data={salesData} options={chartOptions} />
         </div>
-        
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Recent Activities</h2>
+
+        {/* Recent Activities */}
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Recent Activities</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <FaUsers className="text-blue-500 mr-3" />
-                <span>New user registered</span>
+            {[
+              { icon: FaUsers, text: 'New user registered', color: 'text-blue-500', time: '5 mins ago' },
+              { icon: FaShoppingBag, text: 'New order received', color: 'text-purple-500', time: '15 mins ago' },
+              { icon: FaBox, text: 'Product stock updated', color: 'text-yellow-500', time: '1 hour ago' }
+            ].map((item, idx) => (
+              <div key={idx} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <item.icon className={`${item.color} text-lg mr-3`} />
+                  <span className="text-gray-700">{item.text}</span>
+                </div>
+                <span className="text-sm text-gray-500">{item.time}</span>
               </div>
-              <span className="text-sm text-gray-500">5 mins ago</span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <FaShoppingBag className="text-purple-500 mr-3" />
-                <span>New order received</span>
-              </div>
-              <span className="text-sm text-gray-500">15 mins ago</span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <FaBox className="text-yellow-500 mr-3" />
-                <span>Product stock updated</span>
-              </div>
-              <span className="text-sm text-gray-500">1 hour ago</span>
-            </div>
+            ))}
           </div>
         </div>
       </div>
