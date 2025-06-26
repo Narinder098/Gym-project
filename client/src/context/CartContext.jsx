@@ -49,7 +49,7 @@ export const CartProvider = ({ children }) => {
           });
           toast.success('Added to cart!');
         } else {
-          toast.error(response.data.message || 'Failed to add to cart');
+          // toast.error(response.data.message || 'Failed to add to cart');
         }
       } else {
         setCartItems(prev => {

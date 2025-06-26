@@ -1,11 +1,11 @@
 import HeroBanner from '../components/HeroBanner';
-import Exercises from '../components/Exercises';
+import AboutSection from '../components/AboutSection';
 
 const Home = () => {
   return (
     <div>
       <HeroBanner />
-      <Exercises />
+      <AboutSection />
     </div>
   );
 };
