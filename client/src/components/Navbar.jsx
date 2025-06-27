@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaDumbbell, FaShoppingCart, FaUser, FaBars, FaTimes } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -10,71 +10,86 @@ const Navbar = () => {
   const { cartItems } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    toast("User logged out successfully");
-    setTimeout(() => {
-      navigate('/');
-    }, 1000);
+    toast("User logged out");
+    navigate('/');
   };
 
+  const navLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/exercises', label: 'Exercises' },
+    { path: '/shop', label: 'Shop' },
+    { path: '/subscription', label: 'Subscription' },
+    { path: '/contact', label: 'Contact' },
+  ];
+
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4">
+    <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
+      <div className="container mx-auto px-4 md:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 transition-transform duration-300 hover:scale-105">
-            <FaDumbbell className="text-blue-500 text-2xl" />
-            <span className="text-xl font-bold">Fitness Hub</span>
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-gray-900 font-bold text-xl hover:opacity-80 transition"
+          >
+            <FaDumbbell className="text-blue-600 text-2xl" />
+            Fitness Hub
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex space-x-6">
-            <Link to="/" className="text-gray-700 hover:text-primary transition-colors duration-300">Home</Link>
-            <Link to="/exercises" className="text-gray-700 hover:text-primary transition-colors duration-300">Exercises</Link>
-            <Link to="/shop" className="text-gray-700 hover:text-primary transition-colors duration-300">Shop</Link>
-            <Link to="/subscription" className="text-gray-700 hover:text-primary transition-colors duration-300">Subscription</Link>
-            <Link to="/contact" className="text-gray-700 hover:text-primary transition-colors duration-300">Contact</Link>
+          <div className="hidden md:flex gap-6 items-center">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`text-sm font-medium transition-colors ${
+                  location.pathname === link.path
+                    ? 'text-blue-600 font-semibold'
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
-          {/* Right Side */}
-          <div className="flex items-center space-x-4">
-            {/* Cart Icon - hidden on small screens */}
-            <Link to="/cart" className="relative transition-transform duration-300 hover:scale-110 inline-block">
-              <FaShoppingCart className="text-2xl text-gray-700 hover:text-primary" />
+          {/* Right Section */}
+          <div className="flex items-center gap-4">
+            <Link to="/cart" className="relative">
+              <FaShoppingCart className="text-xl text-gray-700 hover:text-blue-600 transition" />
               {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
                   {cartItems.length}
                 </span>
               )}
             </Link>
 
-            {/* Login / Dashboard */}
             {user ? (
-              <div className="flex items-center space-x-4">
-                {/* <button
-                  onClick={logout}
-                  className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
-                >
-                  Logout
-                </button> */}
-                <Link to="/dashboard" className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors duration-300">
-                  <FaUser />
-                  <span>Dashboard</span>
-                </Link>
-              </div>
+              <Link
+                to="/dashboard"
+                className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+                  location.pathname.includes('/dashboard')
+                    ? 'text-blue-600 font-semibold'
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
+              >
+                <FaUser />
+                Dashboard
+              </Link>
             ) : (
               <Link
                 to="/login"
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition"
               >
                 Login
               </Link>
             )}
 
-            {/* Hamburger Icon */}
-            <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden focus:outline-none">
+            {/* Mobile Menu Toggle */}
+            <button onClick={() => setMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden">
               {isMobileMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
             </button>
           </div>
@@ -82,23 +97,30 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-2 rounded-lg bg-gradient-to-br from-white to-gray-100 shadow-lg p-4 animate-fade-in-down">
-            <div className="flex flex-col space-y-3 text-center text-gray-700">
-              <Link to="/" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary">Home</Link>
-              <Link to="/exercises" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary">Exercises</Link>
-              <Link to="/shop" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary">Shop</Link>
-              <Link to="/subscription" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary">Subscription</Link>
-              <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary">Contact</Link>
-              {/* {user ? (
-                <button onClick={handleLogout} className="bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition">
-                  Logout
-                </button>
-              ) : (
-                <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="bg-primary text-white py-2 rounded-md hover:bg-red-600 transition">
-                  Login
-                </Link>
-              )} */}
-            </div>
+          <div className="md:hidden mt-2 pb-4 border-t pt-4 space-y-2 text-center">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block text-sm font-medium transition-colors ${
+                  location.pathname === link.path
+                    ? 'text-blue-600 font-semibold'
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {!user && (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm mx-10 mt-2"
+              >
+                Login
+              </Link>
+            )}
           </div>
         )}
       </div>

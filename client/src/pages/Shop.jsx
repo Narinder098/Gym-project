@@ -20,81 +20,75 @@ const Shop = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch products from the API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://gym-project-server.onrender.com/products/getAllProduct');
-        console.log('Fetch products response:', response.data);
-        const productsData = response.data.products || response.data;
+        const res = await axios.get('https://gym-project-server.onrender.com/products/getAllProduct');
+        const productsData = res.data.products || res.data;
         if (Array.isArray(productsData)) {
           setProducts(productsData);
         } else {
           setError('Invalid response format');
-          console.error('API response is not an array:', response.data);
         }
-        setLoading(false);
       } catch (err) {
         setError('Failed to fetch products');
-        console.error('Error fetching products:', err.response?.data || err.message);
+      } finally {
         setLoading(false);
       }
     };
     fetchProducts();
   }, []);
 
-  // Filter products
-  const filteredProducts = Array.isArray(products)
-    ? products.filter((product) => {
-        const matchesCategory =
-          selectedCategory === 'all' || product.category === selectedCategory;
-        const matchesSearch =
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesCategory && matchesSearch;
-      })
-    : [];
+  const filteredProducts = products.filter((product) => {
+    const matchesCategory =
+      selectedCategory === 'all' || product.category === selectedCategory;
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const handleAddToCart = (product) => {
-    console.log('Adding to cart:', product);
     addToCart(product);
   };
 
-  if (error) return <div className="text-center text-red-500 py-16">{error}</div>;
+  if (error) {
+    return <div className="text-center text-red-600 py-16">{error}</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-16">
-      <div className="text-center mb-12 transform translate-y-4 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]">
-        <h1 className="text-4xl font-bold mb-4">Fitness Equipment Shop</h1>
+      <div className="text-center mb-10">
+        <h1 className="text-4xl font-bold mb-3">Shop Fitness Essentials</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Find everything you need for your fitness journey, from premium equipment to supplements
+          Find quality equipment and supplements to support your fitness journey.
         </p>
       </div>
 
-      {/* Search Bar */}
-      <div className="max-w-2xl mx-auto mb-8">
+      {/* Search */}
+      <div className="max-w-xl mx-auto mb-8">
         <div className="relative">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search products..."
-            className="w-full px-6 py-4 rounded-full border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors duration-300"
+            className="w-full px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
-          <FaSearch className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <FaSearch className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
       </div>
 
-      {/* Category Filters */}
-      <div className="flex flex-wrap gap-4 justify-center mb-12">
+      {/* Filters */}
+      <div className="flex flex-wrap justify-center gap-3 mb-12">
         {categories.map((category) => (
           <button
             key={category.id}
             onClick={() => setSelectedCategory(category.id)}
-            className={`px-6 py-3 rounded-full capitalize transition-all duration-300 hover:scale-105 ${
+            className={`px-5 py-2 text-sm rounded-full font-medium transition ${
               selectedCategory === category.id
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-gray-700 hover:bg-blue-500 hover:text-white'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-blue-500 hover:text-white'
             }`}
           >
             {category.name}
@@ -102,42 +96,32 @@ const Shop = () => {
         ))}
       </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      {/* Product Grid */}
+     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {loading ? (
-          // Display skeleton loaders in the grid
-          Array.from({ length: 8 }).map((_, index) => (
-            <ProductSkeleton key={index} />
-          ))
-        ) : filteredProducts.length > 0 ? (
+          Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
+        ) : filteredProducts.length ? (
           filteredProducts.map((product, index) => (
             <div
               key={product._id || index}
-              className="bg-white rounded-lg shadow-md overflow-hidden transform translate-y-4 opacity-0 hover:-translate-y-2 transition-all duration-300"
-              style={{
-                animation: `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`
-              }}
+              className="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-lg transition duration-300"
             >
-              <div className="relative overflow-hidden">
+              <div className="relative">
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-64 object-cover transform hover:scale-110 transition-transform duration-300"
+                  className="w-full h-56 object-cover hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-2 right-2">
-                  <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">
-                    ${product.price.toFixed(2)}
-                  </span>
+                <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  ${product.price.toFixed(2)}
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                <p className="text-gray-600 mb-4 h-20 overflow-hidden">
-                  {product.description}
-                </p>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2">{product.description}</p>
                 <button
                   onClick={() => handleAddToCart(product)}
-                  className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105"
+                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-red-600 transition"
                 >
                   Add to Cart
                 </button>
@@ -145,8 +129,8 @@ const Shop = () => {
             </div>
           ))
         ) : (
-          <div className="col-span-full text-center text-gray-600 mt-8">
-            No products found matching your criteria.
+          <div className="col-span-full text-center text-gray-500">
+            No products found for the selected category.
           </div>
         )}
       </div>

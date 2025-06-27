@@ -10,133 +10,88 @@ const AboutSection = () => {
   return (
     <section className="py-12 bg-gray-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Mission */}
+        {/* Intro */}
         <motion.div className="text-center mb-12" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">About Fitness Hub</h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Fitness Hub is your ultimate destination for a healthier, stronger you. Founded with a passion for fitness, we provide a welcoming environment where everyone, from beginners to athletes, can thrive. Our mission is to inspire and empower you to reach your fitness goals through top-notch facilities, expert guidance, and a supportive community.
+            Fitness Hub is your ultimate destination for a healthier, stronger you. Our mission is to inspire and empower everyone—from beginners to athletes—through cutting-edge equipment, expert guidance, and a vibrant community.
           </p>
         </motion.div>
 
-        {/* Facilities */}
-        <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="md:w-1/2">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center">
-                <FaDumbbell className="text-blue-600 mr-2" /> State-of-the-Art Facilities
-              </h3>
-              <p className="text-gray-600">
-                Our gym is equipped with the latest fitness technology, including advanced cardio machines, a wide range of free weights, and dedicated spaces for functional training and stretching.
-              </p>
+        {/* Section Items */}
+        {[
+          {
+            title: "State-of-the-Art Facilities",
+            icon: <FaDumbbell className="text-blue-600 mr-2" />,
+            description: "Our gym is equipped with advanced cardio machines, free weights, and dedicated areas for stretching and HIIT.",
+            image: "https://th.bing.com/th/id/OIP.hOlcD1pOkAlqIakajAWegAHaE8?rs=1&pid=ImgDetMain&cb=idpwebpc2",
+            reverse: false
+          },
+          {
+            title: "Expert Trainers",
+            icon: <FaStar className="text-blue-600 mr-2" />,
+            description: "Certified trainers provide customized workout and nutrition plans tailored to your goals.",
+            image: "https://tse4.mm.bing.net/th/id/OIP.FxqWAwJJa3vsjsvw8vO0LAHaE8?rs=1&pid=ImgDetMain&cb=idpwebpc2",
+            reverse: true
+          },
+          {
+            title: "Dynamic Classes",
+            icon: <FaRunning className="text-blue-600 mr-2" />,
+            description: "From yoga and Zumba to CrossFit and spinning, our group classes keep you motivated and energized.",
+            image: "https://tse3.mm.bing.net/th/id/OIP.bBFl3U0LZ1qXz5DVXKv8oQHaEJ?rs=1&pid=ImgDetMain&cb=idpwebpc2",
+            reverse: false
+          },
+          {
+            title: "Our Community",
+            icon: <FaUsers className="text-blue-600 mr-2" />,
+            description: "We foster a positive, encouraging space where members lift each other up and celebrate progress together.",
+            image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=compress&cs=tinysrgb&w=1080&q=80",
+            reverse: true
+          },
+          {
+            title: "Transformations That Inspire",
+            icon: <FaStar className="text-yellow-500 mr-2" />,
+            description: "Real success stories showcase how determination, support, and training can change lives.",
+            image: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=compress&cs=tinysrgb&w=1080&q=80",
+            reverse: false
+          },
+          {
+            title: "Wellness Beyond Fitness",
+            icon: <FaUsers className="text-green-600 mr-2" />,
+            description: "From mental wellness workshops to lifestyle coaching, we support total well-being.",
+            image: "https://tse1.mm.bing.net/th/id/OIP.Y_F8ncR5hhTxw4wGhN-x9gHaE8?rs=1&pid=ImgDetMain&cb=idpwebpc2",
+            reverse: true
+          },
+        ].map((item, index) => (
+          <motion.div
+            key={index}
+            className="mb-12"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={sectionVariants}
+          >
+            <div className={`flex flex-col ${item.reverse ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-6`}>
+              <div className="md:w-1/2">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center">
+                  {item.icon} {item.title}
+                </h3>
+                <p className="text-gray-600">{item.description}</p>
+              </div>
+              <img
+                src={item.image}
+                alt={item.title}
+                className="md:w-1/2 h-64 object-cover rounded-lg shadow"
+                loading="lazy"
+              />
             </div>
-            <img
-              src="https://images.unsplash.com/photo-1601420053934-7c07c5dcb481?auto=format&fit=crop&w=1470&q=80"
-              alt="Gym facilities"
-              className="md:w-1/2 h-64 object-cover rounded-lg"
-            />
-          </div>
-        </motion.div>
-
-        {/* Trainers */}
-        <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
-          <div className="flex flex-col md:flex-row-reverse items-center gap-6">
-            <div className="md:w-1/2">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center">
-                <FaStar className="text-blue-600 mr-2" /> Expert Trainers
-              </h3>
-              <p className="text-gray-600">
-                Our certified trainers are here to guide you every step of the way. With expertise in strength training, nutrition, and recovery, they offer personalized plans and group sessions.
-              </p>
-            </div>
-            <img
-              src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=1470&q=80"
-              alt="Trainers"
-              className="md:w-1/2 h-64 object-cover rounded-lg"
-            />
-          </div>
-        </motion.div>
-
-        {/* Classes */}
-        <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="md:w-1/2">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center">
-                <FaRunning className="text-blue-600 mr-2" /> Dynamic Classes
-              </h3>
-              <p className="text-gray-600">
-                From yoga and Pilates to HIIT and spin classes, our diverse schedule caters to all fitness levels. Join our energetic group sessions to stay engaged and have fun.
-              </p>
-            </div>
-            <img
-              src="https://images.unsplash.com/photo-1583454110551-e6c08c1dc6c6?auto=format&fit=crop&w=1470&q=80"
-              alt="Classes"
-              className="md:w-1/2 h-64 object-cover rounded-lg"
-            />
-          </div>
-        </motion.div>
-
-        {/* Community */}
-        <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
-          <div className="flex flex-col md:flex-row-reverse items-center gap-6">
-            <div className="md:w-1/2">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center">
-                <FaUsers className="text-blue-600 mr-2" /> Our Community
-              </h3>
-              <p className="text-gray-600">
-                At Fitness Hub, you’re part of a family. Our members connect through workouts, fitness challenges, and events. Whether you’re celebrating or struggling, we’re here for you.
-              </p>
-            </div>
-            <img
-              src="https://images.unsplash.com/photo-1594737625785-c55d34b4a3fa?auto=format&fit=crop&w=1470&q=80"
-              alt="Community"
-              className="md:w-1/2 h-64 object-cover rounded-lg"
-            />
-          </div>
-        </motion.div>
-
-        {/* Success Stories */}
-        <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="md:w-1/2">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center">
-                <FaStar className="text-yellow-500 mr-2" /> Transformations That Inspire
-              </h3>
-              <p className="text-gray-600">
-                Meet the people who turned goals into results. From weight loss to strength building, their stories show what's possible with commitment and support.
-              </p>
-            </div>
-            <img
-              src="https://images.unsplash.com/photo-1583454110551-21b575db0a3b?auto=format&fit=crop&w=1470&q=80"
-              alt="Success Story"
-              className="md:w-1/2 h-64 object-cover rounded-lg"
-            />
-          </div>
-        </motion.div>
-
-        {/* Wellness */}
-        <motion.div className="mb-12" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
-          <div className="flex flex-col md:flex-row-reverse items-center gap-6">
-            <div className="md:w-1/2">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2 flex items-center">
-                <FaUsers className="text-green-600 mr-2" /> Wellness Beyond Fitness
-              </h3>
-              <p className="text-gray-600">
-                We promote holistic well-being. From mental health workshops to eco-conscious practices, Fitness Hub goes beyond workouts to support your lifestyle.
-              </p>
-            </div>
-            <img
-              src="https://images.unsplash.com/photo-1588776814546-b9227e53a614?auto=format&fit=crop&w=1470&q=80"
-              alt="Wellness"
-              className="md:w-1/2 h-64 object-cover rounded-lg"
-            />
-          </div>
-        </motion.div>
+          </motion.div>
+        ))}
 
         {/* Divider */}
         <hr className="my-12 border-t border-gray-300 w-1/2 mx-auto" />
 
-        {/* Call to Action */}
+        {/* CTA */}
         <motion.div className="text-center" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={sectionVariants}>
           <a
             href="/login"
@@ -145,7 +100,6 @@ const AboutSection = () => {
             Join Now
           </a>
         </motion.div>
-
       </div>
     </section>
   );

@@ -83,6 +83,7 @@ export const CartProvider = ({ children }) => {
 
   const syncCartOnLogin = async () => {
     try {
+      const token = localStorage.getItem("token");
       for (const item of cartItems) {
         await axios.post('   https://gym-project-server.onrender.com/cart/add', {
           productId: item._id,
@@ -98,7 +99,7 @@ export const CartProvider = ({ children }) => {
       toast.success('Cart synced with server!');
     } catch (error) {
       console.error('Sync cart error:', error);
-      toast.error('Failed to sync cart');
+      // toast.error('Failed to sync cart');
     }
   };
 

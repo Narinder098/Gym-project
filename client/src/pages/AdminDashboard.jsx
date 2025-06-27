@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { FaUsers, FaDumbbell, FaBox, FaCrown, FaShoppingBag, FaTachometerAlt, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaUsers,
+  FaDumbbell,
+  FaBox,
+  FaCrown,
+  FaShoppingBag,
+  FaTachometerAlt,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminNavbar from "../components/AdminNavbar";
 import UsersManagement from "../components/admin/UsersManagement";
@@ -14,10 +23,12 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("overview");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const path = location.pathname.replace("/admin/", "").replace("/management", "") || "overview";
+    const path =
+      location.pathname.replace("/admin/", "").replace("/management", "") ||
+      "overview";
     setActiveTab(path);
   }, [location.pathname]);
 
@@ -30,7 +41,7 @@ const AdminDashboard = () => {
   };
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen((prev) => !prev);
   };
 
   const navItems = [
@@ -49,13 +60,21 @@ const AdminDashboard = () => {
         <AdminNavbar />
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Backdrop on mobile */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
         <motion.aside
           initial={false}
-          animate={{ x: isSidebarOpen ? 0 : -260 }}
-          transition={{ type: "tween" }}
-          className={`bg-white w-60 border-r shadow-md z-40 md:relative md:translate-x-0 md:block flex-shrink-0`}
+          animate={{ x: isSidebarOpen || window.innerWidth >= 768 ? 0 : -260 }}
+          transition={{ type: "tween", duration: 0.3 }}
+          className="bg-white w-60 border-r shadow-md z-50 fixed top-[64px] bottom-0 left-0 md:relative md:translate-x-0"
         >
           <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-xl font-semibold text-gray-800">Admin</h2>
@@ -76,7 +95,9 @@ const AdminDashboard = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === item.id ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-100"
+                  activeTab === item.id
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 {item.icon}
@@ -86,13 +107,13 @@ const AdminDashboard = () => {
           </nav>
         </motion.aside>
 
-        {/* Content Scrollable */}
+        {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-gray-100">
-          {/* Mobile Toggle Button */}
+          {/* Mobile Sidebar Toggle Button */}
           <button
             onClick={toggleSidebar}
-            className="fixed top-20 left-4 z-50 p-2 bg-blue-600 text-white rounded-md shadow md:hidden"
-            aria-label="Open sidebar"
+            className="fixed top-[80px] left-4 z-50 p-2 bg-blue-600 text-white rounded-md shadow-md md:hidden"
+            aria-label="Toggle sidebar"
           >
             <FaBars />
           </button>
@@ -116,7 +137,10 @@ const AdminDashboard = () => {
                   <Route path="/management" element={<UsersManagement />} />
                   <Route path="/exercises" element={<ExercisesManagement />} />
                   <Route path="/products" element={<ProductsManagement />} />
-                  <Route path="/subscriptions" element={<SubscriptionsManagement />} />
+                  <Route
+                    path="/subscriptions"
+                    element={<SubscriptionsManagement />}
+                  />
                   <Route path="/orders" element={<OrdersManagement />} />
                 </Routes>
               </motion.div>
