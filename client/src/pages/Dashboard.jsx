@@ -149,11 +149,10 @@ const Dashboard = () => {
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-gray-900 text-base">Order #{order._id.slice(-6)}</span>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
                       order.status === 'Shipped' ? 'bg-blue-100 text-blue-700' :
-                      'bg-yellow-100 text-yellow-700'
-                    }`}
+                        'bg-yellow-100 text-yellow-700'
+                      }`}
                   >
                     {order.status || 'Pending'}
                   </span>
@@ -205,141 +204,176 @@ const Dashboard = () => {
   );
 
   const renderOrders = () => {
-    if (error) {
-      return (
-        <div className="text-center text-red-500 py-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
-          <p>{error}</p>
-        </div>
-      );
-    }
-
-    if (!Array.isArray(orders) || orders.length === 0) {
-      return (
-        <div className="text-center text-gray-600 py-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
-          <p>No orders available</p>
-        </div>
-      );
-    }
-
+  if (error) {
     return (
-      <div className="space-y-6">
+      <div className="text-center text-red-500 py-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
-        {orders.map((order) => (
-          <div
-            key={order._id}
-            className="bg-white rounded-lg shadow-md p-6 mb-4"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Order #{order._id.slice(-6)}</h3>
-                <p className="text-gray-500 text-sm">
-                  {order.createdAt ? formatWorkoutDate(order.createdAt) : 'Date not available'}
-                </p>
-              </div>
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                  order.status === 'Shipped' ? 'bg-blue-100 text-blue-700' :
-                  'bg-yellow-100 text-yellow-700'
-                }`}
-              >
-                {order.status || 'Pending'}
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {Array.isArray(order.items) && order.items.length > 0 ? (
-                order.items.slice(0, 2).map((item, index) => (
-                  <div
-                    key={item._id || item.product?._id || `${order._id}-${index}`}
-                    className="flex justify-between items-center"
-                  >
-                    <div>
-                      <p className="font-medium text-gray-900 text-base">{item.product?.name || 'Unknown Product'}</p>
-                      <p className="text-gray-500 text-sm">Qty: {item.quantity || 1}</p>
-                    </div>
-                    <p className="font-medium text-gray-900 text-base">
-                      ${(item.product?.price ? item.product.price.toFixed(2) : '0.00')}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600 text-sm">No items in this order</p>
-              )}
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-gray-200">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-900 text-base">Total</span>
-                <span className="font-semibold text-gray-900 text-base">
-                  ${order.totalPrice ? order.totalPrice.toFixed(2) : '0.00'}
-                </span>
-              </div>
-              <div className="text-gray-600 text-sm mt-2 flex items-center">
-                <FaMapMarkerAlt className="mr-2 text-blue-600" />
-                <span>{formatShippingAddress(order.shippingAddress)}</span>
-              </div>
-            </div>
-          </div>
-        ))}
+        <p>{error}</p>
       </div>
     );
-  };
+  }
+
+  if (!Array.isArray(orders) || orders.length === 0) {
+    return (
+      <div className="text-center text-gray-600 py-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Order History</h2>
+        <p>No orders available</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Orders</h2>
+      {orders.map((order) => (
+        <div
+          key={order._id}
+          className="bg-white rounded-xl shadow p-6 border border-gray-200"
+        >
+          {/* Header */}
+          <div className="flex justify-between flex-wrap sm:flex-nowrap items-center mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Order #{order._id.slice(-6)}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {order.createdAt ? formatWorkoutDate(order.createdAt) : 'Date not available'}
+              </p>
+            </div>
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-semibold mt-2 sm:mt-0 ${
+                order.status === 'Delivered'
+                  ? 'bg-green-100 text-green-700'
+                  : order.status === 'Shipped'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-yellow-100 text-yellow-700'
+              }`}
+            >
+              {order.status || 'Pending'}
+            </span>
+          </div>
+
+          {/* Items */}
+          <div className="divide-y divide-gray-200">
+            {Array.isArray(order.items) && order.items.length > 0 ? (
+              order.items.map((item, index) => (
+                <div key={index} className="flex justify-between items-start py-4">
+                  <div>
+                    <p className="font-medium text-gray-900">{item.product?.name || 'Unknown Product'}</p>
+                    <p className="text-sm text-gray-500">Qty: {item.quantity || 1}</p>
+                  </div>
+                  <p className="text-sm text-gray-700 font-medium">
+                    ${item.product?.price?.toFixed(2) || '0.00'}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-600 py-4">No items in this order</p>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="mt-6 border-t pt-4">
+            <div className="flex justify-between items-center">
+              <span className="text-base font-semibold text-gray-900">Total</span>
+              <span className="text-base font-semibold text-gray-900">
+                ${order.totalPrice?.toFixed(2) || '0.00'}
+              </span>
+            </div>
+            {order.shippingAddress && (
+              <div className="mt-2 text-sm text-gray-600 flex items-center">
+                <FaMapMarkerAlt className="text-blue-500 mr-2" />
+                <span>{formatShippingAddress(order.shippingAddress)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
   const renderProfile = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-        <div className="flex flex-col items-center space-y-4 mb-6">
+    <div className="px-4 py-8">
+      <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-xl max-w-3xl mx-auto overflow-hidden">
+        {/* Header */}
+        <div className="flex flex-col items-center p-8 bg-blue-100 border-b border-blue-200">
           <img
-            src={user.avatar || 'https://picsum.photos/80'}
+            src={user.avatar || 'https://picsum.photos/100'}
             alt={user.name}
-            className="w-16 h-16 rounded-full border-2 border-blue-100"
+            className="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover"
             onError={handleImageError}
           />
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-            <p className="text-gray-500 text-sm">{user.email}</p>
-            <p className="text-gray-400 text-sm">Member since {user.memberSince || 'Unknown'}</p>
+          <div className="mt-4 text-center">
+            <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+            <p className="text-sm text-gray-600">{user.email}</p>
+            <p className="text-xs text-gray-400 mt-1">Member since {user.memberSince || 'Unknown'}</p>
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center">
-              <FaCrown className="text-blue-600 mr-2" />
-              <span className="text-gray-700 text-base">Membership</span>
+        {/* Profile Details */}
+        <div className="p-6 space-y-6">
+          {/* Membership Status */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <div className="flex items-center gap-3">
+              <FaCrown className="text-yellow-500 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-700">Membership Status</p>
+                <p className="text-sm text-gray-500">Premium Member</p>
+              </div>
             </div>
-            <span className="text-green-600 font-semibold text-sm">Active</span>
+            <span className="text-green-600 font-medium">Active</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center">
-              <FaCreditCard className="text-blue-600 mr-2" />
-              <span className="text-gray-700 text-base">Payment</span>
+          {/* Workout Streak */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <div className="flex items-center gap-3">
+              <FaChartLine className="text-indigo-600 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-700">Workout Streak</p>
+                <p className="text-sm text-gray-500">Last 7 days active</p>
+              </div>
             </div>
-            <span className="text-gray-500 text-sm">•••• 4242</span>
+            <span className="text-blue-700 font-medium">7 Days</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center">
-              <FaBell className="text-blue-600 mr-2" />
-              <span className="text-gray-700 text-base">Notifications</span>
+          {/* Preferred Time */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <div className="flex items-center gap-3">
+              <FaCalendar className="text-pink-500 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-700">Preferred Workout Time</p>
+                <p className="text-sm text-gray-500">Set by user in preferences</p>
+              </div>
+            </div>
+            <span className="text-gray-600">6AM – 8AM</span>
+          </div>
+
+          {/* Notifications */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FaBell className="text-blue-500 text-xl" />
+              <div>
+                <p className="font-semibold text-gray-700">Email Notifications</p>
+                <p className="text-sm text-gray-500">Workout tips, offers, reminders</p>
+              </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:h-4 after:w-4 after:rounded-full after:transition-all duration-200"></div>
+              <div className="w-10 h-5 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:h-4 after:w-4 after:rounded-full after:transition-all peer-checked:after:translate-x-full"></div>
             </label>
           </div>
         </div>
 
-        <button
-          onClick={handleDelete}
-          className="mt-6 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium text-base"
-        >
-          Delete Account
-        </button>
+        {/* Actions */}
+        <div className="bg-blue-50 p-6 border-t border-blue-100 text-center">
+          <button
+            onClick={handleDelete}
+            className="w-full bg-red-600 text-white py-2.5 rounded-lg font-semibold hover:bg-red-700 transition-all duration-300"
+          >
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -384,11 +418,10 @@ const Dashboard = () => {
                     setActiveTab(item.value);
                     setIsSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-x-2 px-4 py-3 rounded-lg text-base transition-colors duration-200 ${
-                    activeTab === item.value
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
+                  className={`w-full flex items-center gap-x-2 px-4 py-3 rounded-lg text-base transition-colors duration-200 ${activeTab === item.value
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                    }`}
                 >
                   <item.name className="text-lg" />
                   <span>{item.icon}</span>

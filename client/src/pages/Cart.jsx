@@ -38,8 +38,8 @@ const Cart = () => {
   );
 
   const shipping = useMemo(() => (subtotal >= 100 ? 0 : 9.99), [subtotal]);
-  const tax = useMemo(() => subtotal * 0.08, [subtotal]);
-  const total = subtotal + shipping + tax;
+  // const tax = useMemo(() => subtotal * 0.08, [subtotal]);
+  const total = subtotal + shipping ;
 
   const handleAddressSubmit = (e) => {
     e.preventDefault();
