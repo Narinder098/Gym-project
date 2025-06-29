@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,9 +11,15 @@ const Cart = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [quantities, setQuantities] = useState(() =>
-    cartItems.reduce((acc, item) => ({ ...acc, [item.id]: item.quantity || 1 }), {})
-  );
+  const [quantities, setQuantities] = useState(() => {
+    const saved = localStorage.getItem('cartQuantities');
+    if (saved) return JSON.parse(saved);
+    return cartItems.reduce((acc, item) => ({ ...acc, [item._id]: item.quantity || 1 }), {});
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cartQuantities', JSON.stringify(quantities));
+  }, [quantities]);
 
   const [address, setAddress] = useState({
     fullName: '',
@@ -33,7 +39,7 @@ const Cart = () => {
   };
 
   const subtotal = useMemo(
-    () => cartItems.reduce((sum, item) => sum + item.price * (quantities[item.id] || 1), 0),
+    () => cartItems.reduce((sum, item) => sum + item.price * (quantities[item._id] || 1), 0),
     [cartItems, quantities]
   );
 
@@ -52,7 +58,7 @@ const Cart = () => {
       const payload = {
         items: cartItems.map(item => ({
           product: item._id,
-          quantity: quantities[item.id] || 1,
+          quantity: quantities[item._id] || 1,
         })),
         shippingAddress: {
           street: address.streetAddress,
@@ -64,17 +70,16 @@ const Cart = () => {
         },
       };
       const token = localStorage.getItem("token");
-      console.log('Placing order:', payload);
       const response = await axios.post('https://gym-project-server.onrender.com/orders/place', payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
         withCredentials: true,
       });
-      console.log('Order response:', response.data);
       if (response.data.success) {
         toast.success('Order placed successfully');
         clearCart();
+        localStorage.removeItem('cartQuantities');
         navigate('/Dashboard');
       } else {
         toast.error(response.data.message || 'Order placement failed');
@@ -95,19 +100,19 @@ const Cart = () => {
             <h3 className="text-lg font-semibold">{item.name}</h3>
             <p className="text-gray-600">${item.price.toFixed(2)}</p>
             <div className="flex items-center mt-2">
-              <button onClick={() => updateQuantity(item.id, quantities[item.id] - 1)} className="text-gray-500 hover:text-primary">
+              <button onClick={() => updateQuantity(item._id, quantities[item._id] - 1)} className="text-gray-500 hover:text-primary">
                 <FaMinus />
               </button>
-              <span className="mx-4">{quantities[item.id]}</span>
-              <button onClick={() => updateQuantity(item.id, quantities[item.id] + 1)} className="text-gray-500 hover:text-primary">
+              <span className="mx-4">{quantities[item._id]}</span>
+              <button onClick={() => updateQuantity(item._id, quantities[item._id] + 1)} className="text-gray-500 hover:text-primary">
                 <FaPlus />
               </button>
-              <button onClick={() => removeFromCart(item.id)} className="ml-6 text-red-500 hover:text-red-600">
+              <button onClick={() => removeFromCart(item._id)} className="ml-6 text-red-500 hover:text-red-600">
                 <FaTrash />
               </button>
             </div>
           </div>
-          <div className="text-right font-bold text-lg">${((item.price * quantities[item.id]) || item.price).toFixed(2)}</div>
+          <div className="text-right font-bold text-lg">${(item.price * (quantities[item._id] || 1)).toFixed(2)}</div>
         </div>
       ))}
     </div>
@@ -133,7 +138,7 @@ const Cart = () => {
   );
 
   const renderOrderSummary = () => (
-    <div className=" bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
       <div className="space-y-2">
         <SummaryRow label="Subtotal" value={subtotal} />
@@ -209,7 +214,7 @@ const Cart = () => {
   }
 
   return (
-    <div className=" container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-16">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {step === 'cart' && renderCartItems()}
