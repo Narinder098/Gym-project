@@ -2,12 +2,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from '../components/LoadingSpinner';
+import { useCart } from "./CartContext";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { syncCartOnLogin} = useCart();
 
   const login = async ({ token, user }) => {
     try {
@@ -15,6 +17,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       toast.success("Login successful!");
+      syncCartOnLogin();
     } catch (error) {
       console.error("Login failed", error);
       toast.error("Login failed");

@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Cart routes
 router.get('/', getCart); // Get user's cart
-router.post('/add',auth, addToCart); // Add item to cart
+router.post('/add', auth, addToCart); // ✅ requires user to be logged in
 router.post('/remove', removeFromCart); // Remove item from cart
 router.post('/clear', clearCart); // Clear cart
 

@@ -19,13 +19,25 @@ export const getCart = async (req, res) => {
 export const addToCart = async (req, res) => {
   try {
     const { productId, quantity = 1 } = req.body;
-    console.log('addToCart - Request body:', req.body);
-    console.log('addToCart - req.user:', req.user);
-    if (!req.user) {
-      return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
+    const userId = req.user.id;
+
+    let cart = await CartModel.findOne({ userId });
+
+    if (!cart) {
+      // Create new cart
+      cart = new CartModel({ userId, items: [{ productId, quantity }] });
+    } else {
+      const existingItem = cart.items.find(item => item.productId.toString() === productId);
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
+        cart.items.push({ productId, quantity });
+      }
     }
-    const userId = req.user.id; // Line 22
-    // ... rest of the code ...
+
+    await cart.save();
+    const populatedCart = await CartModel.findOne({ userId }).populate('items.productId');
+    return res.status(200).json({ success: true, cart: populatedCart });
   } catch (error) {
     console.error('addToCart - Error:', error);
     return res.status(500).json({ success: false, message: 'Error adding to cart', error: error.message });
