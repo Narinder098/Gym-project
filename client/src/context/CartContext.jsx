@@ -43,27 +43,22 @@ export const CartProvider = ({ children }) => {
   };
 
   const addToCart = async (product) => {
-    const token = localStorage.getItem('token');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const isLoggedIn = !!token;
 
     try {
       if (isLoggedIn) {
         const response = await axios.post(
           'https://gym-project-server.onrender.com/cart/add',
+          { productId: product._id, quantity: 1 },
           {
-            productId: product._id,
-            quantity: 1,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
             withCredentials: true,
           }
         );
 
         if (response.data.success) {
-          updateLocalCart(product); // Optional: update local for UI sync
+          updateLocalCart(product);
           toast.success('Added to cart!');
         } else {
           toast.error(response.data.message || 'Failed to add to cart');
@@ -72,15 +67,12 @@ export const CartProvider = ({ children }) => {
         updateLocalCart(product);
         toast.success('Added to cart (local)!');
       }
-    } catch (error) {
-      console.error('Add to cart error:', error.response?.data || error.message);
-      if (error.response?.status === 401) {
-        toast.error('Please log in to sync your cart');
-      } else {
-        toast.error('Failed to add to cart');
-      }
+    } catch (err) {
+      console.error('Add to cart error:', err.message);
+      toast.error('Add to cart failed');
     }
   };
+
 
   const syncCartOnLogin = async () => {
     try {

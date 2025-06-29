@@ -20,7 +20,7 @@ app.use(cors({
     "http://localhost:5173",
     "https://gym-project-client.onrender.com"
   ],
-  credentials: true
+  credentials: true,
 }));
 
 connectDB();
