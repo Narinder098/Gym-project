@@ -5,15 +5,14 @@ import { useAuth } from "../context/AuthContext";
 import { FaDumbbell, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Toaster, toast } from "sonner";
 import axios from "axios";
-import { useEffect } from "react";
 import { useCart } from "../context/CartContext";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const { user, login , loading} = useAuth();
+
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const { restoreUser } = useAuth();
   const { setAuthenticated } = useCart();
 
   const {
@@ -28,26 +27,31 @@ const Login = () => {
       const endpoint = isLogin ? "login" : "registerUser";
       const payload = isLogin
         ? { email: data.email, password: data.password }
-        : { name: data.name, email: data.email, password: data.password};
+        : { name: data.name, email: data.email, password: data.password };
 
-      const response = await axios.post(`https://gym-project-server.onrender.com/auth/${endpoint}`, payload, {
-        withCredentials: true,
-      });
-      setAuthenticated(true); // Set authenticated state in CartContext
+      const response = await axios.post(
+        `https://gym-project-server.onrender.com/auth/${endpoint}`,
+        payload,
+        {
+          withCredentials: true,
+        }
+      );
 
-      const { token } = response.data.user;
-      // console.log("res", response.data)
-      localStorage.setItem("token",token);
-      // console.log(token);
+      const token = response.data.token || response.data.user?.token;
+      const userPayload = response.data.user;
 
-      await login({ token, user: response.data.user });
+      if (!token || !userPayload) {
+        throw new Error("Token or user data missing from response");
+      }
+
+      localStorage.setItem("token", token);
+      await login({ token, user: userPayload });
+      setAuthenticated(true);
 
       toast.success(`${isLogin ? "Login" : "Signup"} successful!`);
       reset();
 
-      const loggedInUser = response.data.user;
-
-      if (loggedInUser.email === "admin@gmail.com") {
+      if (userPayload.email === "admin@gmail.com") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
@@ -68,11 +72,10 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="bottom-right" richColors />
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md transform translate-y-4 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
         <div className="text-center">
           <FaDumbbell className="mx-auto h-12 w-12 text-blue-500" />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
@@ -80,12 +83,9 @@ const Login = () => {
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="rounded-md shadow-sm space-y-4">
+          <div className="space-y-4">
             {!isLogin && (
               <div>
-                <label htmlFor="name" className="sr-only">
-                  Name
-                </label>
                 <input
                   {...register("name", {
                     required: "Name is required",
@@ -95,7 +95,7 @@ const Login = () => {
                     },
                   })}
                   type="text"
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                   placeholder="Name"
                 />
                 {errors.name && (
@@ -104,9 +104,6 @@ const Login = () => {
               </div>
             )}
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
               <input
                 {...register("email", {
                   required: "Email is required",
@@ -116,7 +113,7 @@ const Login = () => {
                   },
                 })}
                 type="email"
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 placeholder="Email address"
               />
               {errors.email && (
@@ -124,15 +121,10 @@ const Login = () => {
               )}
             </div>
             <div className="relative">
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
               <input
-                {...register("password", {
-                  required: "Password is required",
-                })}
+                {...register("password", { required: "Password is required" })}
                 type={showPassword ? "text" : "password"}
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 placeholder="Password"
               />
               <button
@@ -148,23 +140,23 @@ const Login = () => {
             </div>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300"
-            >
-              {isLogin ? "Sign in" : "Sign up"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-red-600 text-white py-2 px-4 rounded-md transition duration-300"
+          >
+            {isLogin ? "Sign in" : "Sign up"}
+          </button>
         </form>
 
         <div className="text-center">
           <button
             type="button"
             onClick={toggleForm}
-            className="text-sm text-blue-500 hover:text-red-600 transition-colors duration-300"
+            className="text-sm text-blue-500 hover:text-red-600 transition"
           >
-            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+            {isLogin
+              ? "Don't have an account? Sign up"
+              : "Already have an account? Sign in"}
           </button>
         </div>
       </div>
