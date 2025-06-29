@@ -50,14 +50,15 @@ export const signUpController = async (req, res) => {
     await newUser.save();
 
     // Set cookie
+    const isProd = process.env.NODE_ENV === 'production';
+
     res.cookie("sessionToken", token, {
       httpOnly: true,
-      secure: true, // true in production with HTTPS
-      // secure: false, // true in production with HTTPS
-      sameSite: "none", // "None" for cross-origin
-      // sameSite: "Lax", // "None" for cross-origin
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
 
     return res.status(201).json({
       success: true,
