@@ -11,7 +11,7 @@ A full-featured Gym Management Web Application built with the **MERN stack** (Mo
 - **Authentication:** JWT, Cookies
 - **Payments:** Razorpay (Not Integrated now)
 - **State Management:** React Context, Redux Toolkit (for cart)
-- **Deployment:** (Yet to deploy)
+- **Deployment:** https://gym-project-client.onrender.com/
 
 ---
 
